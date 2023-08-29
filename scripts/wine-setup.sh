@@ -1,4 +1,4 @@
-pacman -S wine --no-confirm
+pacman -S wine --noconfirm
 xdg-mime default wine.desktop exe
 cd /tmp/installer/
 mkdir -p winetricks
