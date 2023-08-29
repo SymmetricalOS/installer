@@ -1,1 +1,1 @@
-cp -r /tmp/scripts /mnt/tmp/installer
+cp -r /tmp/installer /mnt/tmp/installer
