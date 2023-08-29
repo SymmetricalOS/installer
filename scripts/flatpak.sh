@@ -1,1 +1,1 @@
-pacman -S flatpak
+pacman -S flatpak --no-confirm
