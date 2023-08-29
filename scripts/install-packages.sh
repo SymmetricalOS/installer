@@ -1,5 +1,5 @@
 # git
-pacman -S git
+pacman -S git --noconfirm
 
 # yay
 cd /tmp/installer
