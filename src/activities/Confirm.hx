@@ -71,7 +71,7 @@ class Confirm extends FlxState {
 		if (FlxG.mouse.overlaps(button) && FlxG.mouse.justPressed)
 			FlxG.switchState(new Reboot());
 
-		progressBar.width = Math.floor((progress / totalProgress) * FlxG.width);
-		progressBar.x = 0;
+		// progressBar.width = Math.floor((progress / totalProgress) * FlxG.width);
+		// progressBar.x = 0;
 	}
 }
