@@ -1,3 +1,7 @@
 #test_command lime run cpp
 
 lime build cpp
+cp -r scripts/ iso/config/airootfs/tmp/installer/
+cp -r sysrootfs/ iso/config/airootfs/tmp/installer/
+cp bin/linux/bin/installer iso/config/airootfs/root/
+sudo mkarchiso -v -w bin/iso/ -o bin/iso/ iso/config/

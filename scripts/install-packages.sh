@@ -3,4 +3,4 @@ pacman -S git --noconfirm
 
 
 # wine
-/tmp/installer/wine-setup.sh
+/tmp/installer/scripts/wine-setup.sh
