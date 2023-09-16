@@ -1,0 +1,11 @@
+[Unit]
+Description=installer
+
+[Service]
+User=root
+ExecStart=startx
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

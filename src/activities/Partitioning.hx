@@ -6,8 +6,11 @@ import flixel.FlxState;
 import flixel.group.FlxGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import sys.FileSystem;
 import ui.GProgress;
 import util.Progress;
+
+using StringTools;
 
 class Partitioning extends FlxState {
 	static var bg:FlxSprite;
@@ -20,6 +23,9 @@ class Partitioning extends FlxState {
 
 	static var option1Bg:FlxSprite;
 	static var option1Text:FlxText;
+
+	static var drives:Array<String> = new Array();
+	static var dr:Array<FlxText> = new Array();
 
 	override public function create() {
 		super.create();
@@ -51,6 +57,42 @@ class Partitioning extends FlxState {
 		option1Text.screenCenter(XY);
 		add(option1Bg);
 		add(option1Text);
+
+		var ds = FileSystem.readDirectory("/dev/");
+		for (d in ds) {
+			if (d.startsWith("sda") || d.startsWith("vda")) {
+				var numbers = "0123456789";
+				var yes = true;
+				for (n in numbers.split("")) {
+					if (d.contains(n))
+						yes = false;
+				}
+				if (yes) {
+					drives.push(d);
+					trace('Found /dev/$d');
+				}
+			}
+			if (d.startsWith("nvme")) {
+				if (d.substr(4).contains("n")) {
+					if (!d.contains("p")) {
+						drives.push(d);
+						trace('Found /dev/$d');
+					}
+				}
+			}
+		}
+
+		for (drive in drives) {
+			Sys.sleep(0.01);
+			var text = new FlxText(0, 0, 0, drive).setFormat("legato-sans.ttf", 32, FlxColor.BLACK);
+			text.screenCenter(X);
+			if (dr.length > 0)
+				text.y = dr[dr.length - 1].height + dr[dr.length - 1].y;
+			else
+				text.y = title.y + title.height;
+			dr.push(text);
+			add(dr[dr.length - 1]);
+		}
 	}
 
 	override public function update(elapsed:Float) {
