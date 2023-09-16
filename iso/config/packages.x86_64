@@ -124,8 +124,6 @@ virtualbox-guest-utils-nox
 vpnc
 xorg
 xorg-xinit
-xorg-twm
-xorg-xclock
 xterm
 wezterm-terminfo
 wireless-regdb
