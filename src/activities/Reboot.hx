@@ -45,6 +45,6 @@ class Reboot extends FlxState {
 		super.update(elapsed);
 
 		if (FlxG.mouse.overlaps(button) && FlxG.mouse.justPressed)
-			FlxG.switchState(new MainActivity());
+			Sys.command("reboot");
 	}
 }
