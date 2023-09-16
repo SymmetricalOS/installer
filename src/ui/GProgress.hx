@@ -30,7 +30,7 @@ class GProgress extends FlxGroup {
 
 		for (i in 0...Progress.total) {
 			var step = Progress.steps[i];
-			var t = new FlxText(0, 0, 0, step).setFormat(null, 32, FlxColor.BLACK);
+			var t = new FlxText(0, 0, 0, step).setFormat("legato-sans.ttf", 32, FlxColor.BLACK);
 			t.x = bg.width * 2;
 			t.y = (i / Progress.total) * height;
 			labels.push(t);

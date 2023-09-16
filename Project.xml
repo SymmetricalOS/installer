@@ -29,7 +29,9 @@
 	<window if="html5" resizable="false" />
 
 	<!--Desktop-specific-->
-	<window if="desktop" orientation="landscape" fullscreen="true" resizable="false" />
+	<window if="desktop" orientation="landscape" resizable="false" />
+
+	<window unless="debug" fullscreen="true" />
 
 	<!--Mobile-specific-->
 	<window if="mobile" orientation="landscape" fullscreen="true" width="0" height="0" />
