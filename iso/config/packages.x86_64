@@ -123,7 +123,6 @@ virtualbox-guest-utils-nox
 vpnc
 xorg
 xorg-xinit
-xterm
 wezterm-terminfo
 wireless-regdb
 wireless_tools
