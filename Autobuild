@@ -1,7 +1,9 @@
-#test_command lime run cpp
+#test_command sudo virsh --connect qemu:///system start "archlinux-2" && sudo virt-manager --connect qemu:///system --show-domain-console "archlinux-2"
 
-lime build cpp
+sudo rm -rf bin/iso/
+lime build hl
 cp -r scripts/ iso/config/airootfs/tmp/installer/
 cp -r sysrootfs/ iso/config/airootfs/tmp/installer/
-cp bin/linux/bin/installer iso/config/airootfs/root/
+mkdir -p iso/config/airootfs/root/installer/
+cp -r bin/hl/bin/ iso/config/airootfs/root/installer/
 sudo mkarchiso -v -w bin/iso/ -o bin/iso/ iso/config/

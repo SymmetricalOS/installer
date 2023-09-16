@@ -62,6 +62,7 @@ mc
 mdadm
 memtest86+
 memtest86+-efi
+mesa
 mkinitcpio
 mkinitcpio-archiso
 mkinitcpio-nfs-utils
@@ -77,6 +78,7 @@ ntfs-3g
 nvme-cli
 open-iscsi
 open-vm-tools
+openbox
 openconnect
 openpgp-card-tools
 openssh
@@ -96,6 +98,7 @@ rp-pppoe
 rsync
 rxvt-unicode-terminfo
 screen
+sdl2
 sdparm
 sequoia-sq
 sg3_utils
@@ -119,6 +122,11 @@ usbutils
 vim
 virtualbox-guest-utils-nox
 vpnc
+xorg
+xorg-xinit
+xorg-twm
+xorg-xclock
+xterm
 wezterm-terminfo
 wireless-regdb
 wireless_tools

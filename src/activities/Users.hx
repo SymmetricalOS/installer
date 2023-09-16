@@ -27,7 +27,7 @@ class Users extends FlxState {
 		bg.makeGraphic(FlxG.width, FlxG.height, FlxColor.GRAY);
 		add(bg);
 
-		title = new FlxText(0, 0, 0, "Users").setFormat("opensans.ttf", 64, FlxColor.BLACK);
+		title = new FlxText(0, 0, 0, "Users").setFormat(null, 64, FlxColor.BLACK);
 		title.y = FlxG.height / 32;
 		title.screenCenter(X);
 		add(title);
@@ -35,7 +35,7 @@ class Users extends FlxState {
 		progress = new GProgress(FlxG.height);
 		add(progress);
 
-		button = new FlxText(0, 0, 0, "Next").setFormat("opensans.ttf", 48, FlxColor.fromInt(0xFFED820E), CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		button = new FlxText(0, 0, 0, "Next").setFormat(null, 48, FlxColor.fromInt(0xFFED820E), CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		button.x = FlxG.width - button.width;
 		button.y = FlxG.height - button.height;
 		add(button);

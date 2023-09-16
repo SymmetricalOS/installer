@@ -10,9 +10,13 @@ import util.Progress;
 class Main extends Sprite {
 	public function new() {
 		super();
+		trace("here");
 		Progress.init();
-		Lib.current.addChild(new FlxGame(0, 0, MainActivity, 60, 60, true, false));
+		trace("here");
+		Lib.current.addChild(new FlxGame(0, 0, MainActivity, 30, 30, true, true));
+		trace("here");
 
 		FlxG.mouse.useSystemCursor = true;
+		trace("here");
 	}
 }
