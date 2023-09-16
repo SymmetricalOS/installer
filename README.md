@@ -8,7 +8,8 @@ Note: you MUST use Arch Linux to build the program.
 
 1. Install [autobuild](https://github.com/sidgames5/autobuild)
 2. Install `archiso` from pacman
-3. Type `build` in the terminal
+3. Install `haxe` from pacman
+4. Type `build` in the terminal
 
 ISO file is located in `bin/iso/`
 
