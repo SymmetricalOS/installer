@@ -45,7 +45,7 @@ class Internet extends FlxState {
 		button.y = FlxG.height - button.height;
 		add(button);
 
-		status = new FlxText(0, 0, 0, "Checking connection").setFormat("legato-sans.ttf", 36, FlxColor.BLACK);
+		status = new FlxText(0, 0, 0, "Checking connection...").setFormat("legato-sans.ttf", 36, FlxColor.BLACK);
 		status.screenCenter(XY);
 		add(status);
 	}
@@ -68,9 +68,11 @@ class Internet extends FlxState {
 		var s = Sys.command("curl -I https://1.1.1.1");
 		if (s == 0) {
 			button.color = FlxColor.fromInt(0xFFED820E);
-			status.text = "Connected to the internet";
+			status.text = "Connected to the internet!";
 			status.screenCenter(XY);
 			connected = true;
+		} else {
+			status.text = "Failed to connect. Please plug in the ethernet cable.";
 		}
 	}
 }

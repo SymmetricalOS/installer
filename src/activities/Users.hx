@@ -3,6 +3,7 @@ package activities;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.addons.ui.FlxInputText;
 import flixel.group.FlxGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
@@ -17,6 +18,13 @@ class Users extends FlxState {
 	static var progress:FlxGroup;
 
 	static var button:FlxText;
+
+	static var username:FlxInputText;
+	static var password:FlxInputText;
+	static var confirmPassword:FlxInputText;
+	static var usernamel:FlxText;
+	static var passwordl:FlxText;
+	static var confirmPasswordl:FlxText;
 
 	override public function create() {
 		super.create();
@@ -40,6 +48,37 @@ class Users extends FlxState {
 		button.x = FlxG.width - button.width;
 		button.y = FlxG.height - button.height;
 		add(button);
+
+		username = new FlxInputText(0, 0, 320, "", 32, FlxColor.BLACK);
+		username.font = "legato-sans.ttf";
+		username.screenCenter(XY);
+		username.y -= username.height;
+		add(username);
+		usernamel = new FlxText(0, 0, 0, "Username: ").setFormat("legato-sans.ttf", 32, FlxColor.BLACK);
+		usernamel.x = username.x - usernamel.width;
+		usernamel.y = username.y;
+		add(usernamel);
+
+		password = new FlxInputText(0, 0, 320, "", 32, FlxColor.BLACK);
+		password.font = "legato-sans.ttf";
+		password.screenCenter(XY);
+		password.passwordMode = true;
+		add(password);
+		passwordl = new FlxText(0, 0, 0, "Password: ").setFormat("legato-sans.ttf", 32, FlxColor.BLACK);
+		passwordl.x = password.x - passwordl.width;
+		passwordl.y = password.y;
+		add(passwordl);
+
+		confirmPassword = new FlxInputText(0, 0, 320, "", 32, FlxColor.BLACK);
+		confirmPassword.font = "legato-sans.ttf";
+		confirmPassword.screenCenter(XY);
+		confirmPassword.y += confirmPassword.height;
+		confirmPassword.passwordMode = true;
+		add(confirmPassword);
+		confirmPasswordl = new FlxText(0, 0, 0, "Confirm Password: ").setFormat("legato-sans.ttf", 32, FlxColor.BLACK);
+		confirmPasswordl.x = confirmPassword.x - confirmPasswordl.width;
+		confirmPasswordl.y = confirmPassword.y;
+		add(confirmPasswordl);
 	}
 
 	override public function update(elapsed:Float) {

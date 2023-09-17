@@ -84,7 +84,8 @@ class Partitioning extends FlxState {
 
 		for (drive in drives) {
 			Sys.sleep(0.01);
-			var text = new FlxText(0, 0, 0, drive).setFormat("legato-sans.ttf", 32, FlxColor.BLACK);
+			var s = FileSystem.stat("/dev/" + drive);
+			var text = new FlxText(0, 0, 0, drive + " - " + (s.size / 1000000000) + " GB").setFormat("legato-sans.ttf", 32, FlxColor.BLACK);
 			text.screenCenter(X);
 			if (dr.length > 0)
 				text.y = dr[dr.length - 1].height + dr[dr.length - 1].y;
