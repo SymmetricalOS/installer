@@ -21,19 +21,29 @@ class Installer {
 		Sys.command("mount /dev/" + Config.LOCAL_PARTITION_LAYOUT_BOOT + " /mnt/boot");
 	}
 
-	public static function unmountDrives() {
-		Sys.command("umount -R /mnt");
+	public static function configureFstab() {
+		Sys.command("genfstab -U /mnt >> /mnt/etc/fstab");
+	}
+
+	public static function copyFsroot() {
+		Sys.command("cp -r /tmp/installer/scripts /mnt/tmp/installer");
+		Sys.command("cp -r /tmp/installer/sysrootfs /mnt");
 	}
 
 	public static function installBaseSystem() {
 		Sys.command("/tmp/installer/scripts/basic-install.sh");
 	}
 
-	public static function installPackages() {}
+	public static function installPackages() {
+		Sys.command("arch-chroot /mnt /tmp/installer/scripts/install-packages.sh");
+	}
 
-	public static function configureGrub() {}
+	public static function configureGrub() {
+		Sys.command("arch-chroot /mnt grub-install /dev/" + Config.LOCAL_PARTITION_DISK);
+		Sys.command("arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg");
+	}
 
-	public static function configureFstab() {}
-
-	public static function copyFsroot() {}
+	public static function unmountDrives() {
+		Sys.command("umount -R /mnt");
+	}
 }
