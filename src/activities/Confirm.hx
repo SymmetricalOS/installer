@@ -21,6 +21,8 @@ class Confirm extends FlxState {
 
 	static var progress = 0;
 	static var totalProgress = 0;
+	static var finished = false;
+	static var started = false;
 
 	static var button:FlxText;
 
@@ -52,27 +54,70 @@ class Confirm extends FlxState {
 		progressBar.y = progressBg.y;
 		add(progressBar);
 
-		button = new FlxText(0, 0, 0,
-			"Finish").setFormat("legato-sans.ttf", 48, FlxColor.fromInt(0xFFED820E), CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		button = new FlxText(0, 0, 0, "Finish").setFormat("legato-sans.ttf", 48, FlxColor.GRAY, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		button.x = FlxG.width - button.width;
 		button.y = FlxG.height - button.height;
 		add(button);
-
-		totalProgress = 3;
-		progress++;
-
-		status.text = "Installing base system";
-		Installer.installBaseSystem();
-		progress++;
 	}
 
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
 
-		if (FlxG.mouse.overlaps(button) && FlxG.mouse.justPressed)
+		if (!started)
+			install();
+
+		if (FlxG.mouse.overlaps(button) && FlxG.mouse.justPressed && finished)
 			FlxG.switchState(new Reboot());
 
-		// progressBar.width = Math.floor((progress / totalProgress) * FlxG.width);
-		// progressBar.x = 0;
+		progressBar.width = Math.floor((progress / totalProgress) * FlxG.width);
+	}
+
+	function install() {
+		started = true;
+		totalProgress = 9;
+
+		status.text = "Partitioning drives";
+		if (Installer.partitionDrives()) {
+			progress++;
+			status.text = "Formatting drives";
+			if (Installer.formatDrives()) {
+				progress++;
+				status.text = "Mounting drives";
+				if (Installer.mountDrives()) {
+					progress++;
+					status.text = "Installing base system";
+					if (Installer.installBaseSystem()) {
+						progress++;
+						status.text = "Configuring fstab";
+						if (Installer.configureFstab()) {
+							progress++;
+							status.text = "Copying files";
+							if (Installer.copyFsroot()) {
+								progress++;
+								status.text = "Installing packages";
+								if (Installer.installPackages()) {
+									progress++;
+									status.text = "Configuring grub";
+									if (Installer.configureGrub()) {
+										progress++;
+										status.text = "Cleaning up";
+										if (Installer.unmountDrives()) {
+											progress++;
+											finished = true;
+											status.text = "Finished";
+											button.color = FlxColor.fromInt(0xFFED820E);
+											return;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		// status.text = "Installation failed";
+		finished = true;
+		button.color = FlxColor.fromInt(0xFFED820E);
 	}
 }

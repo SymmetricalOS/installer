@@ -105,8 +105,13 @@ class Partitioning extends FlxState {
 		if (FlxG.mouse.overlaps(button) && FlxG.mouse.justPressed) {
 			Config.LOCAL_PARTITION_LAYOUT = "wipe";
 			Config.LOCAL_PARTITION_DISK = disksel;
-			Config.LOCAL_PARTITION_LAYOUT_BOOT = disksel + "p1";
-			Config.LOCAL_PARTITION_LAYOUT_MAIN = disksel + "p2";
+			if (disksel.contains("nvme")) {
+				Config.LOCAL_PARTITION_LAYOUT_BOOT = disksel + "p1";
+				Config.LOCAL_PARTITION_LAYOUT_MAIN = disksel + "p2";
+			} else {
+				Config.LOCAL_PARTITION_LAYOUT_BOOT = disksel + "1";
+				Config.LOCAL_PARTITION_LAYOUT_MAIN = disksel + "2";
+			}
 			FlxG.switchState(new Users());
 		}
 
