@@ -8,6 +8,7 @@ import flixel.group.FlxGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import ui.GProgress;
+import util.Config;
 import util.Progress;
 
 class Users extends FlxState {
@@ -84,7 +85,16 @@ class Users extends FlxState {
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
 
-		if (FlxG.mouse.overlaps(button) && FlxG.mouse.justPressed)
+		if (password.text != confirmPassword.text) {
+			confirmPassword.backgroundColor = FlxColor.RED;
+		} else {
+			confirmPassword.backgroundColor = FlxColor.WHITE;
+		}
+
+		if (FlxG.mouse.overlaps(button) && FlxG.mouse.justPressed && password.text == confirmPassword.text) {
+			Config.USER_USERNAME = username.text;
+			Config.USER_PASSWORD = password.text;
 			FlxG.switchState(new Desktop());
+		}
 	}
 }
