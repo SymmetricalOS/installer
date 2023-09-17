@@ -63,7 +63,7 @@ class Partitioning extends FlxState {
 
 		var ds = FileSystem.readDirectory("/dev/");
 		for (d in ds) {
-			if (d.startsWith("sda") || d.startsWith("vda")) {
+			if (d.startsWith("sd") || d.startsWith("vd")) {
 				var numbers = "0123456789";
 				var yes = true;
 				for (n in numbers.split("")) {

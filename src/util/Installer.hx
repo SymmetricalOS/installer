@@ -1,12 +1,13 @@
 package util;
 
+import sys.FileSystem;
+
 class Installer {
 	public static function partitionDrives() {
 		Sys.command("parted /dev/" + Config.LOCAL_PARTITION_DISK + " mklabel gpt");
-		Sys.command("parted /dev/" + Config.LOCAL_PARTITION_DISK + " mkpart primary boot 0 512M");
-		Sys.command("parted /dev/" + Config.LOCAL_PARTITION_DISK + " mkpart primary root 512M 100%");
-		Sys.command("parted /dev/" + Config.LOCAL_PARTITION_DISK + " set boot boot on");
-		Sys.command("parted /dev/" + Config.LOCAL_PARTITION_DISK + " set root root on");
+		Sys.command("parted /dev/" + Config.LOCAL_PARTITION_DISK + " mkpart primary 0 512M");
+		Sys.command("parted /dev/" + Config.LOCAL_PARTITION_DISK + " mkpart primary 512M 100%");
+		Sys.command("parted /dev/" + Config.LOCAL_PARTITION_DISK + " set 1 boot on");
 	}
 
 	public static function formatDrives() {
@@ -15,6 +16,7 @@ class Installer {
 	}
 
 	public static function mountDrives() {
+		FileSystem.createDirectory("/mnt/boot/");
 		Sys.command("mount /dev/" + Config.LOCAL_PARTITION_LAYOUT_MAIN + " /mnt");
 		Sys.command("mount /dev/" + Config.LOCAL_PARTITION_LAYOUT_BOOT + " /mnt/boot");
 	}
