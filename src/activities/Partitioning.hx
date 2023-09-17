@@ -8,6 +8,7 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import sys.FileSystem;
 import ui.GProgress;
+import util.Config;
 import util.Progress;
 
 using StringTools;
@@ -26,6 +27,8 @@ class Partitioning extends FlxState {
 
 	static var drives:Array<String> = new Array();
 	static var dr:Array<FlxText> = new Array();
+
+	static var disksel:String = "";
 
 	override public function create() {
 		super.create();
@@ -85,7 +88,7 @@ class Partitioning extends FlxState {
 		for (drive in drives) {
 			Sys.sleep(0.01);
 			var s = FileSystem.stat("/dev/" + drive);
-			var text = new FlxText(0, 0, 0, drive + " - " + (s.size / 1000000000) + " GB").setFormat("legato-sans.ttf", 32, FlxColor.BLACK);
+			var text = new FlxText(0, 0, 0, drive).setFormat("legato-sans.ttf", 32, FlxColor.BLACK);
 			text.screenCenter(X);
 			if (dr.length > 0)
 				text.y = dr[dr.length - 1].height + dr[dr.length - 1].y;
@@ -99,7 +102,23 @@ class Partitioning extends FlxState {
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
 
-		if (FlxG.mouse.overlaps(button) && FlxG.mouse.justPressed)
+		if (FlxG.mouse.overlaps(button) && FlxG.mouse.justPressed) {
+			Config.LOCAL_PARTITION_LAYOUT = "wipe";
+			Config.LOCAL_PARTITION_DISK = disksel;
+			Config.LOCAL_PARTITION_LAYOUT_BOOT = disksel + "p1";
+			Config.LOCAL_PARTITION_LAYOUT_MAIN = disksel + "p2";
 			FlxG.switchState(new Users());
+		}
+
+		for (d in dr) {
+			if (d.text == disksel) {
+				d.color = FlxColor.fromInt(0xFFED820E);
+			} else {
+				d.color = FlxColor.BLACK;
+			}
+			if (FlxG.mouse.overlaps(d) && FlxG.mouse.justPressed) {
+				disksel = d.text;
+			}
+		}
 	}
 }
