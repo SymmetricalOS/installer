@@ -54,7 +54,7 @@ class Partitioning extends FlxState {
 		add(button);
 
 		option1Bg = new FlxSprite();
-		option1Text = new FlxText(0, 0, 0, "Wipe Disk").setFormat("legato-sans.ttf", 48, FlxColor.BLACK);
+		option1Text = new FlxText(0, 0, 0, "Erase Disk").setFormat("legato-sans.ttf", 48, FlxColor.BLACK);
 		option1Bg.makeGraphic(cast option1Text.width + 32, cast option1Text.height + 18, FlxColor.fromInt(0xFFED820E));
 		option1Bg.screenCenter(XY);
 		option1Text.screenCenter(XY);
