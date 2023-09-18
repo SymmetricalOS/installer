@@ -14,7 +14,9 @@ class Installer {
 			if (Sys.command("parted /dev/" + Config.LOCAL_PARTITION_DISK + " mkpart primary 1024M 1536M") == 0) {
 				if (Sys.command("parted /dev/" + Config.LOCAL_PARTITION_DISK + " mkpart primary 1536M 100%") == 0) {
 					if (Sys.command("parted /dev/" + Config.LOCAL_PARTITION_DISK + " set 1 bios_grub on") == 0) {
-						return true;
+						if (Sys.command("parted /dev/" + Config.LOCAL_PARTITION_DISK + " set 1 boot on") == 0) {
+							return true;
+						}
 					}
 				}
 			}
