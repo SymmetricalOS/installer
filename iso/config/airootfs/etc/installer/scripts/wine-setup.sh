@@ -1,6 +1,6 @@
 pacman -S wine --noconfirm
-# xdg-mime default wine.desktop exe
-cd /etc/installer/
+xdg-mime default wine.desktop exe
+cd /tmp/installer/
 mkdir -p winetricks
 cd winetricks
 wget  https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks

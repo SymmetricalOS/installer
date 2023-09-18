@@ -1,4 +1,4 @@
-cd /etc/installer
+cd /tmp/installer
 git clone https://aur.archlinux.org/snapd.git
 cd snapd
 makepkg -si --noconfirm

@@ -2,8 +2,8 @@
 
 sudo rm -rf bin/iso/
 lime build linux
-cp -r scripts/ iso/config/airootfs/tmp/installer/
-cp -r sysrootfs/ iso/config/airootfs/tmp/installer/
+cp -r scripts/ iso/config/airootfs/etc/installer/scripts/
+cp -r sysrootfs/ iso/config/airootfs/etc/installer/
 mkdir -p iso/config/airootfs/root/installer/
 cp -r bin/linux/bin/ iso/config/airootfs/root/installer/
 sudo mkarchiso -v -w bin/iso/ -o bin/iso/ iso/config/

@@ -50,8 +50,9 @@ class Confirm extends FlxState {
 		add(progressBg);
 
 		progressBar = new FlxSprite();
-		progressBar.makeGraphic(0, cast FlxG.height / 16, FlxColor.fromInt(0xFFED820E));
+		progressBar.makeGraphic(Math.floor(((progress + 1) / totalProgress) * FlxG.width), cast FlxG.height / 16, FlxColor.fromInt(0xFFED820E));
 		progressBar.y = progressBg.y;
+		progressBar.x = 0;
 		add(progressBar);
 
 		button = new FlxText(0, 0, 0, "Finish").setFormat("legato-sans.ttf", 48, FlxColor.GRAY, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
@@ -69,44 +70,46 @@ class Confirm extends FlxState {
 		if (FlxG.mouse.overlaps(button) && FlxG.mouse.justPressed && finished)
 			FlxG.switchState(new Reboot());
 
-		progressBar.width = Math.floor((progress / totalProgress) * FlxG.width);
+		// progressBar.width = (progress / totalProgress) * FlxG.width;
 	}
 
 	function install() {
 		started = true;
-		totalProgress = 9;
+		totalProgress = 10;
 
-		status.text = "Partitioning drives";
-		if (Installer.partitionDrives()) {
-			progress++;
-			status.text = "Formatting drives";
-			if (Installer.formatDrives()) {
+		if (Installer.addPermissions()) {
+			status.text = "Partitioning drives";
+			if (Installer.partitionDrives()) {
 				progress++;
-				status.text = "Mounting drives";
-				if (Installer.mountDrives()) {
+				status.text = "Formatting drives";
+				if (Installer.formatDrives()) {
 					progress++;
-					status.text = "Installing base system";
-					if (Installer.installBaseSystem()) {
+					status.text = "Mounting drives";
+					if (Installer.mountDrives()) {
 						progress++;
-						status.text = "Configuring fstab";
-						if (Installer.configureFstab()) {
+						status.text = "Installing base system";
+						if (Installer.installBaseSystem()) {
 							progress++;
-							status.text = "Copying files";
-							if (Installer.copyFsroot()) {
+							status.text = "Configuring fstab";
+							if (Installer.configureFstab()) {
 								progress++;
-								status.text = "Installing packages";
-								if (Installer.installPackages()) {
+								status.text = "Copying files";
+								if (Installer.copyFsroot()) {
 									progress++;
-									status.text = "Configuring grub";
-									if (Installer.configureGrub()) {
+									status.text = "Installing packages";
+									if (Installer.installPackages()) {
 										progress++;
-										status.text = "Cleaning up";
-										if (Installer.unmountDrives()) {
+										status.text = "Configuring grub";
+										if (Installer.configureGrub()) {
 											progress++;
-											finished = true;
-											status.text = "Finished";
-											button.color = FlxColor.fromInt(0xFFED820E);
-											return;
+											status.text = "Cleaning up";
+											if (Installer.unmountDrives()) {
+												progress++;
+												finished = true;
+												status.text = "Finished";
+												button.color = FlxColor.fromInt(0xFFED820E);
+												return;
+											}
 										}
 									}
 								}
