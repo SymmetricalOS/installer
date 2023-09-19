@@ -75,6 +75,7 @@ class Confirm extends FlxState {
 			FlxG.switchState(new Reboot());
 
 		progressBar.width = (progress / totalProgress) * FlxG.width;
+		progressBar.x = 0;
 	}
 
 	function install() {

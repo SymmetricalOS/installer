@@ -1,6 +1,7 @@
 #test_command sudo virsh --connect qemu:///system start "archlinux-2" && sudo virt-manager --connect qemu:///system --show-domain-console "archlinux-2"
 
 sudo rm -rf bin/iso/
+sudo rm -rf /iso/config/airootfs/etc/installer/
 lime build linux
 cp -r scripts/ iso/config/airootfs/etc/installer/scripts/
 cp -r sysrootfs/ iso/config/airootfs/etc/installer/
