@@ -8,7 +8,7 @@ pacman -S git --noconfirm
 
 # networkmanager
 pacman -S networkmanager --noconfirm
-systemctl enable NetworkManager
+systemctl enable NetworkManager.service
 
 # grub
 pacman-key --lsign-key eworm@archlinux.org

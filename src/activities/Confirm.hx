@@ -6,6 +6,7 @@ import flixel.FlxState;
 import flixel.group.FlxGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import sys.thread.Thread;
 import ui.GProgress;
 import util.Installer;
 import util.Progress;
@@ -64,8 +65,11 @@ class Confirm extends FlxState {
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
 
-		if (!started)
-			install();
+		if (!started) {
+			var t = Thread.create(() -> {
+				install();
+			});
+		}
 
 		if (FlxG.mouse.overlaps(button) && FlxG.mouse.justPressed && finished)
 			FlxG.switchState(new Reboot());

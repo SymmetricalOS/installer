@@ -14,9 +14,7 @@ class Installer {
 			if (Sys.command("parted /dev/" + Config.LOCAL_PARTITION_DISK + " mkpart primary 1024M 1536M") == 0) {
 				if (Sys.command("parted /dev/" + Config.LOCAL_PARTITION_DISK + " mkpart primary 1536M 100%") == 0) {
 					if (Sys.command("parted /dev/" + Config.LOCAL_PARTITION_DISK + " set 1 boot on") == 0)
-						if (Sys.command("parted /dev/" + Config.LOCAL_PARTITION_DISK + " set 1 bios_grub on") == 0) {
-							return true;
-						}
+						return true;
 				}
 			}
 		}
@@ -65,7 +63,7 @@ class Installer {
 	}
 
 	public static function configureGrub():Bool {
-		if (Sys.command("arch-chroot /mnt grub-install /dev/" + Config.LOCAL_PARTITION_DISK) == 0) {
+		if (Sys.command("arch-chroot /mnt grub-install /dev/" + Config.LOCAL_PARTITION_DISK + " --efi-directory=/boot") == 0) {
 			if (Sys.command("arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg") == 0)
 				return true;
 		}
