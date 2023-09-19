@@ -22,7 +22,7 @@ class Installer {
 	}
 
 	public static function formatDrives():Bool {
-		if (Sys.command("mkfs.ext4 /dev/" + Config.LOCAL_PARTITION_LAYOUT_BOOT) == 0) {
+		if (Sys.command("mkfs.fat -F 32 /dev/" + Config.LOCAL_PARTITION_LAYOUT_BOOT) == 0) {
 			if (Sys.command("mkfs.ext4 /dev/" + Config.LOCAL_PARTITION_LAYOUT_MAIN) == 0) {
 				return true;
 			}

@@ -51,7 +51,7 @@ class Confirm extends FlxState {
 		add(progressBg);
 
 		progressBar = new FlxSprite();
-		progressBar.makeGraphic(Math.floor(((progress + 1) / totalProgress) * FlxG.width), cast FlxG.height / 16, FlxColor.fromInt(0xFFED820E));
+		progressBar.makeGraphic(1, cast FlxG.height / 16, FlxColor.fromInt(0xFFED820E));
 		progressBar.y = progressBg.y;
 		progressBar.x = 0;
 		add(progressBar);
