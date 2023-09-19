@@ -71,6 +71,19 @@ class Installer {
 		return false;
 	}
 
+	public static function installWM():Bool {
+		if (Sys.command("arch-chroot /mnt /etc/installer/scripts/xfce.sh") == 0) {
+			switch (Config.DESKTOP_WM) {
+				case "i3":
+				case "openbox":
+				case "awesome":
+				default:
+					return true;
+			}
+		}
+		return false;
+	}
+
 	public static function unmountDrives():Bool {
 		return Sys.command("umount -R /mnt") == 0;
 	}

@@ -66,7 +66,7 @@ class Confirm extends FlxState {
 		super.update(elapsed);
 
 		if (!started) {
-			var t = Thread.create(() -> {
+			Thread.create(() -> {
 				install();
 			});
 		}
@@ -74,12 +74,12 @@ class Confirm extends FlxState {
 		if (FlxG.mouse.overlaps(button) && FlxG.mouse.justPressed && finished)
 			FlxG.switchState(new Reboot());
 
-		// progressBar.width = (progress / totalProgress) * FlxG.width;
+		progressBar.width = (progress / totalProgress) * FlxG.width;
 	}
 
 	function install() {
 		started = true;
-		totalProgress = 10;
+		totalProgress = 11;
 
 		if (Installer.addPermissions()) {
 			status.text = "Partitioning drives";
@@ -106,13 +106,17 @@ class Confirm extends FlxState {
 										status.text = "Configuring grub";
 										if (Installer.configureGrub()) {
 											progress++;
-											status.text = "Cleaning up";
-											if (Installer.unmountDrives()) {
+											status.text = "Installing desktop";
+											if (Installer.installWM()) {
 												progress++;
-												finished = true;
-												status.text = "Finished";
-												button.color = FlxColor.fromInt(0xFFED820E);
-												return;
+												status.text = "Cleaning up";
+												if (Installer.unmountDrives()) {
+													progress++;
+													finished = true;
+													status.text = "Finished";
+													button.color = FlxColor.fromInt(0xFFED820E);
+													return;
+												}
 											}
 										}
 									}
@@ -123,7 +127,7 @@ class Confirm extends FlxState {
 				}
 			}
 		}
-		// status.text = "Installation failed";
+		status.text = "Installation failed";
 		finished = true;
 		button.color = FlxColor.fromInt(0xFFED820E);
 	}
