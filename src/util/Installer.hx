@@ -50,9 +50,11 @@ class Installer {
 	}
 
 	public static function copyFsroot():Bool {
-		if (Sys.command("cp -r /etc/installer/scripts /mnt/etc/installer") == 0) {
-			if (Sys.command("cp -r /etc/installer/sysrootfs /mnt") == 0)
-				return true;
+		if (Sys.command("mkdir -p /mnt/etc/installer/scripts") == 0) {
+			if (Sys.command("cp -r /etc/installer/scripts /mnt/etc/installer/") == 0) {
+				if (Sys.command("cp -r /etc/installer/sysrootfs /mnt") == 0)
+					return true;
+			}
 		}
 
 		return false;

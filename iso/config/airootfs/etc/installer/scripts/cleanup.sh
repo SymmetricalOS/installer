@@ -1,1 +1,1 @@
-rm -rf /tmp/installer/
+rm -rf /etc/installer/
