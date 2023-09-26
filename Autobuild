@@ -2,10 +2,10 @@
 
 sudo rm -rf bin/iso/
 sudo rm -rf iso/config/airootfs/etc/installer/
-lime build linux
+haxe hxwidgets.hxml
 mkdir -p iso/config/airootfs/etc/installer/scripts/
 cp -r scripts/ iso/config/airootfs/etc/installer/
 cp -r sysrootfs/ iso/config/airootfs/etc/installer/
 mkdir -p iso/config/airootfs/root/installer/
-cp -r bin/linux/bin/ iso/config/airootfs/root/installer/
+cp -r bin/hxwidgets/ iso/config/airootfs/root/installer/
 sudo mkarchiso -v -w bin/iso/ -o bin/iso/ iso/config/

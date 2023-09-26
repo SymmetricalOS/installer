@@ -53,6 +53,10 @@ fi
 # xterm -geometry 80x50+494+51 &
 # xterm -geometry 80x20+494-0 &
 # exec xterm -geometry 80x66+0+0 -name login
-cd /root/installer/bin/
-chmod +x ./installer
-./installer
+# cd /root/installer/bin/
+# chmod +x ./installer
+# ./installer
+chmod +x /etc/installer/scripts/prepare.sh
+chmod +x /etc/installer/scripts/install-packages.sh
+chmod +x /etc/installer/scripts/xfce.sh
+calamares

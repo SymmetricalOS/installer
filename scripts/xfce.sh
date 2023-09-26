@@ -3,11 +3,7 @@
 pacman -S xorg xorg-xinit --noconfirm
 pacman -S xfce4 xfce4-goodies --noconfirm
 
-cd /etc/installer
-git clone https://github.com/nsz32/docklike-plugin && cd docklike-plugin
-./autogen.sh
-make
-sudo make install
+pacman -S xfce4-docklike-plugin --noconfirm
 
 # TODO: apply customizations
 

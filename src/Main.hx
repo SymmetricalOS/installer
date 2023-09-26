@@ -1,22 +1,14 @@
-package;
+package ;
 
-import activities.MainActivity;
-import flixel.FlxG;
-import flixel.FlxGame;
-import openfl.Lib;
-import openfl.display.Sprite;
-import util.Progress;
+import haxe.ui.HaxeUIApp;
 
-class Main extends Sprite {
-	public function new() {
-		super();
-		trace("here");
-		Progress.init();
-		trace("here");
-		Lib.current.addChild(new FlxGame(0, 0, MainActivity, 60, 60, true, false));
-		trace("here");
+class Main {
+    public static function main() {
+        var app = new HaxeUIApp();
+        app.ready(function() {
+            app.addComponent(new MainView());
 
-		FlxG.mouse.useSystemCursor = true;
-		trace("here");
-	}
+            app.start();
+        });
+    }
 }
