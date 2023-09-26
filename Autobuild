@@ -2,7 +2,7 @@
 
 sudo rm -rf bin/iso/
 sudo rm -rf iso/config/airootfs/etc/installer/
-haxe hxwidgets.hxml
+haxe build.hxml
 mkdir -p iso/config/airootfs/etc/installer/scripts/
 cp -r scripts/ iso/config/airootfs/etc/installer/
 cp -r sysrootfs/ iso/config/airootfs/etc/installer/
