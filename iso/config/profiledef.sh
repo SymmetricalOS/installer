@@ -2,10 +2,10 @@
 # shellcheck disable=SC2034
 
 iso_name="symmos"
-iso_label="symmos_$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y%m)"
+iso_version="$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y.%m.%d)"
+iso_label="symmos_$iso_version"
 iso_publisher="Symmetrical OS <https://github.com/SymmetricalOS>"
 iso_application="Symmetrical OS Installer"
-iso_version="$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y.%m.%d)"
 install_dir="arch"
 buildmodes=('iso')
 bootmodes=('bios.syslinux.mbr' 'bios.syslinux.eltorito'
