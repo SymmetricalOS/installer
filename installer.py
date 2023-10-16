@@ -163,11 +163,32 @@ class Progressing(tk.Frame):
     def commands(self):
         if not prod:
             return
-        # TODO: add partitioning code
 
         sp.call(
-            "pacstrap /mnt kernel kernel-firmware symmos symmos-boot symmos-networking"
+            f"parted /dev/{choices.disk} mklabel gpt ---pretend-input-tty <<EOF\ny\nEOF"
         )
+        sp.call(f"parted /dev/{choices.disk} mkpart primary 1024M 1536M")
+        sp.call(f"parted /dev/{choices.disk} mkpart primary 1536M 100%")
+        sp.call(f"parted /dev/{choices.disk} set 1 boot on")
+
+        bootpart = choices.disk + "1"
+        rootpart = choices.disk + "2"
+        if choices.disk.startswith("nvme"):
+            bootpart = choices.disk + "p1"
+            rootpart = choices.disk + "p2"
+        sp.call(f"mkfs.fat -F 32 /dev/{bootpart}")
+        sp.call(f"mkfs.ext4 /dev/{rootpart}")
+
+        sp.call(f"mount /dev/{rootpart} /mnt")
+        sp.call(f"mount --mkdir /dev/{bootpart} /mnt/boot")
+
+        if not offline:
+            sp.call(
+                "pacstrap /mnt kernel kernel-firmware symmos symmos-boot symmos-networking"
+            )
+        else:
+            # TODO
+            pass
         sp.call("genfstab -U /mnt >> /mnt/etc/fstab")
         sp.call("mkdir -p /mnt/etc/installer/scripts")
         sp.call("cp -r /etc/installer/scripts /mnt/etc/installer/")
