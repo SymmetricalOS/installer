@@ -12,10 +12,10 @@ bigger = True
 
 prod = False
 
-font = ("Verdana", 14)
-fontbig = ("Verdana", 35)
-font2 = ("Verdana", 24)
-fontbig2 = ("Verdana", 55)
+font = ("Legato Sans", 14)
+fontbig = ("Legato Sans", 35)
+font2 = ("Legato Sans", 24)
+fontbig2 = ("Legato Sans", 55)
 if bigger:
     font = font2
     fontbig = fontbig2
