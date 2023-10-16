@@ -161,17 +161,34 @@ class Progressing(tk.Frame):
         self.thr.start()
 
     def commands(self):
+        if not prod:
+            return
         # TODO: add partitioning code
 
         sp.call(
             "pacstrap /mnt kernel kernel-firmware symmos symmos-boot symmos-networking"
         )
+        sp.call("genfstab -U /mnt >> /mnt/etc/fstab")
+        sp.call("mkdir -p /mnt/etc/installer/scripts")
+        sp.call("cp -r /etc/installer/scripts /mnt/etc/installer/")
+        sp.call("cp -r /etc/installer/sysrootfs /mnt")
         sp.call("arch-chroot /mnt mkinitcpio -P")
         sp.call(
             "arch-chroot /mnt grub-install --target=x86_64-efi --efi-direcotry=/boot"
         )
         sp.call("arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg")
         sp.call("arch-chroot /mnt /etc/installer/scripts/xfce.sh")
+        if choices.loginscr == "lightdm":
+            sp.call("arch-chroot /mnt /etc/installer/scripts/lightdm.sh")
+        else:
+            sp.call("arch-chroot /mnt /etc/installer/scripts/sddm.sh")
+        sp.call("arch-chroot /mnt echo $password | passwd root --stdin")
+        sp.call(
+            f"arch-chroot /mnt useradd -m -g users -G wheel,storage,power -s /bin/bash {choices.username}"
+        )
+        sp.call(
+            f"arch-chroot /mnt echo {choices.password} | passwd {choices.username} --stdin"
+        )
         sp.call("umount -R /mnt")
 
 
