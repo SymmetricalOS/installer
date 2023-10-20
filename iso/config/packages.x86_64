@@ -16,3 +16,5 @@ xorg
 xorg-xinit
 legato-sans-ttf
 python
+tk
+python-psutil

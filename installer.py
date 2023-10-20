@@ -5,12 +5,13 @@ import tkinter.ttk as ttk
 import threading as th
 import psutil as ps
 import os
+import re
 
 offline = os.path.exists("/etc/installer/offline")
 
 bigger = True
 
-prod = False
+prod = True
 
 font = ("Legato Sans", 14)
 fontbig = ("Legato Sans", 35)
@@ -41,14 +42,27 @@ def run_commands_file(filename):
     return True
 
 
+def has_number_at_end(input_string):
+    # Define a regular expression pattern to match a number at the end of the string
+    pattern = r"\d$"
+
+    # Use re.search() to find the pattern at the end of the string
+    if re.search(pattern, input_string):
+        return True
+    else:
+        return False
+
+
 def checkthing(e: str):
     if e.startswith("nvme"):
-        if not "p" in e and "n" in e:
-            return True
-        else:
-            if not e[-1] in ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]:
-                return False
-        return False
+        if e[5].startswith("n"):
+            if not e[0:-1].endswith("p"):
+                return True
+    else:
+        if e.startswith("sd") or e.startswith("hd") or e.startswith("vd"):
+            if not has_number_at_end(e):
+                return True
+    return False
 
 
 class Progress(tk.Frame):
@@ -165,17 +179,19 @@ class Progressing(tk.Frame):
             return
 
         sp.call(
-            f"parted /dev/{choices.disk} mklabel gpt ---pretend-input-tty <<EOF\ny\nEOF"
+            f"parted /dev/{choices['disk']} mklabel gpt ---pretend-input-tty <<EOF\ny\nEOF"
         )
-        sp.call(f"parted /dev/{choices.disk} mkpart primary 1024M 1536M")
-        sp.call(f"parted /dev/{choices.disk} mkpart primary 1536M 100%")
-        sp.call(f"parted /dev/{choices.disk} set 1 boot on")
+        sp.call(f"parted /dev/{choices['disk']} mkpart primary 1024M 1536M")
+        sp.call(f"parted /dev/{choices['disk']} mkpart primary 1536M 100%")
+        sp.call(f"parted /dev/{choices['disk']} set 1 boot on")
 
         bootpart = choices.disk + "1"
         rootpart = choices.disk + "2"
         if choices.disk.startswith("nvme"):
             bootpart = choices.disk + "p1"
             rootpart = choices.disk + "p2"
+        print(bootpart)
+        print(rootpart)
         sp.call(f"mkfs.fat -F 32 /dev/{bootpart}")
         sp.call(f"mkfs.ext4 /dev/{rootpart}")
 
@@ -205,10 +221,10 @@ class Progressing(tk.Frame):
             sp.call("arch-chroot /mnt /etc/installer/scripts/sddm.sh")
         sp.call("arch-chroot /mnt echo $password | passwd root --stdin")
         sp.call(
-            f"arch-chroot /mnt useradd -m -g users -G wheel,storage,power -s /bin/bash {choices.username}"
+            f"arch-chroot /mnt useradd -m -g users -G wheel,storage,power -s /bin/bash {choices['username']}"
         )
         sp.call(
-            f"arch-chroot /mnt echo {choices.password} | passwd {choices.username} --stdin"
+            f"arch-chroot /mnt echo {choices['password']} | passwd {choices['password']} --stdin"
         )
         sp.call("umount -R /mnt")
 

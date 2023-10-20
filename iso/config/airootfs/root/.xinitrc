@@ -59,4 +59,5 @@ fi
 chmod +x /etc/installer/scripts/prepare.sh
 chmod +x /etc/installer/scripts/install-packages.sh
 chmod +x /etc/installer/scripts/xfce.sh
-calamares
+#calamares
+python /root/installer.py
