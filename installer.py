@@ -198,8 +198,11 @@ class Progressing(tk.Frame):
         os.system("/usr/bin/mount --mkdir /dev/" + bootpart + " /mnt/boot")
 
         if not offline:
+            # os.system(
+            #     "pacstrap /mnt kernel kernel-firmware symmos symmos-boot symmos-networking"
+            # )
             os.system(
-                "pacstrap /mnt kernel kernel-firmware symmos symmos-boot symmos-networking"
+                "pacstrap /mnt linux linux-firmware base base-devel grub networkmanager iwd"
             )
         else:
             # TODO
@@ -213,12 +216,20 @@ class Progressing(tk.Frame):
             "arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot"
         )
         os.system("arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg")
+        os.system("arch-chroot /mnt chmod +x /etc/installer/scripts/*")
         os.system("arch-chroot /mnt /etc/installer/scripts/xfce.sh")
-        if choices.loginscr == "lightdm":
+        if choices["loginscr"] == "lightdm":
             os.system("arch-chroot /mnt /etc/installer/scripts/lightdm.sh")
         else:
             os.system("arch-chroot /mnt /etc/installer/scripts/sddm.sh")
-        os.system("arch-chroot /mnt echo $password | passwd root --stdin")
+        os.system(
+            "arch-chroot /mnt (echo '"
+            + choices["password"]
+            + "'; echo '"
+            + choices["password"]
+            + "') | passwd "
+            + choices["username"]
+        )
         os.system(
             "arch-chroot /mnt useradd -m -g users -G wheel,storage,power -s /bin/bash "
             + choices["username"]

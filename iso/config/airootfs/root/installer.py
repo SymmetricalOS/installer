@@ -1,11 +1,11 @@
-import subprocess as sp
-import requests as r
+import os
+import re
 import tkinter as tk
 import tkinter.ttk as ttk
 import threading as th
+import subprocess as sp
+import requests as r
 import psutil as ps
-import os
-import re
 
 offline = os.path.exists("/etc/installer/offline")
 
@@ -47,10 +47,7 @@ def has_number_at_end(input_string):
     pattern = r"\d$"
 
     # Use re.search() to find the pattern at the end of the string
-    if re.search(pattern, input_string):
-        return True
-    else:
-        return False
+    return re.search(pattern, input_string)
 
 
 def checkthing(e: str):
@@ -201,33 +198,37 @@ class Progressing(tk.Frame):
         os.system("/usr/bin/mount --mkdir /dev/" + bootpart + " /mnt/boot")
 
         if not offline:
+            # os.system(
+            #     "pacstrap /mnt kernel kernel-firmware symmos symmos-boot symmos-networking"
+            # )
             os.system(
-                "/usr/bin/pacstrap /mnt kernel kernel-firmware symmos symmos-boot symmos-networking"
+                "pacstrap /mnt linux linux-firmware base base-devel grub networkmanager iwd"
             )
         else:
             # TODO
             pass
-        os.system("/usr/bin/genfstab -U /mnt >> /mnt/etc/fstab")
-        os.system("/usr/bin/mkdir -p /mnt/etc/installer/scripts")
-        os.system("/usr/bin/cp -r /etc/installer/scripts /mnt/etc/installer/")
-        os.system("/usr/bin/cp -r /etc/installer/sysrootfs /mnt")
-        os.system("/usr/bin/arch-chroot /mnt mkinitcpio -P")
+        os.system("genfstab -U /mnt >> /mnt/etc/fstab")
+        os.system("mkdir -p /mnt/etc/installer/scripts")
+        os.system("cp -r /etc/installer/scripts /mnt/etc/installer/")
+        os.system("cp -r /etc/installer/sysrootfs /mnt")
+        os.system("arch-chroot /mnt mkinitcpio -P")
         os.system(
-            "/usr/bin/arch-chroot /mnt grub-install --target=x86_64-efi --efi-direcotry=/boot"
+            "arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot"
         )
-        os.system("/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg")
-        os.system("/usr/bin/arch-chroot /mnt /etc/installer/scripts/xfce.sh")
-        if choices.loginscr == "lightdm":
-            os.system("/usr/bin/arch-chroot /mnt /etc/installer/scripts/lightdm.sh")
+        os.system("arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg")
+        os.system("arch-chroot /mnt chmod +x /etc/installer/scripts/*")
+        os.system("arch-chroot /mnt /etc/installer/scripts/xfce.sh")
+        if choices["loginscr"] == "lightdm":
+            os.system("arch-chroot /mnt /etc/installer/scripts/lightdm.sh")
         else:
-            os.system("/usr/bin/arch-chroot /mnt /etc/installer/scripts/sddm.sh")
-        os.system("/usr/bin/arch-chroot /mnt echo $password | passwd root --stdin")
+            os.system("arch-chroot /mnt /etc/installer/scripts/sddm.sh")
+        os.system("arch-chroot /mnt echo $password | passwd root --stdin")
         os.system(
-            "/usr/bin/arch-chroot /mnt useradd -m -g users -G wheel,storage,power -s /bin/bash "
+            "arch-chroot /mnt useradd -m -g users -G wheel,storage,power -s /bin/bash "
             + choices["username"]
         )
         os.system(
-            "/usr/bin/arch-chroot /mnt echo "
+            "arch-chroot /mnt echo "
             + choices["password"]
             + " | passwd "
             + choices["password"]
@@ -497,7 +498,7 @@ class installer(tk.Tk):
 def run(command):
     rc = os.system(command)
     if rc.returncode != 0:
-        os.system("umount -R /mnt")
+        sp.run("umount -R /mnt")
     return rc.returncode == 0
 
 
