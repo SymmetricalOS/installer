@@ -199,32 +199,32 @@ class Progressing(tk.Frame):
 
         if not offline:
             os.system(
-                "/usr/bin/pacstrap /mnt kernel kernel-firmware symmos symmos-boot symmos-networking"
+                "pacstrap /mnt kernel kernel-firmware symmos symmos-boot symmos-networking"
             )
         else:
             # TODO
             pass
-        os.system("/usr/bin/genfstab -U /mnt >> /mnt/etc/fstab")
-        os.system("/usr/bin/mkdir -p /mnt/etc/installer/scripts")
-        os.system("/usr/bin/cp -r /etc/installer/scripts /mnt/etc/installer/")
-        os.system("/usr/bin/cp -r /etc/installer/sysrootfs /mnt")
-        os.system("/usr/bin/arch-chroot /mnt mkinitcpio -P")
+        os.system("genfstab -U /mnt >> /mnt/etc/fstab")
+        os.system("mkdir -p /mnt/etc/installer/scripts")
+        os.system("cp -r /etc/installer/scripts /mnt/etc/installer/")
+        os.system("cp -r /etc/installer/sysrootfs /mnt")
+        os.system("arch-chroot /mnt mkinitcpio -P")
         os.system(
-            "/usr/bin/arch-chroot /mnt grub-install --target=x86_64-efi --efi-direcotry=/boot"
+            "arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot"
         )
-        os.system("/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg")
-        os.system("/usr/bin/arch-chroot /mnt /etc/installer/scripts/xfce.sh")
+        os.system("arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg")
+        os.system("arch-chroot /mnt /etc/installer/scripts/xfce.sh")
         if choices.loginscr == "lightdm":
-            os.system("/usr/bin/arch-chroot /mnt /etc/installer/scripts/lightdm.sh")
+            os.system("arch-chroot /mnt /etc/installer/scripts/lightdm.sh")
         else:
-            os.system("/usr/bin/arch-chroot /mnt /etc/installer/scripts/sddm.sh")
-        os.system("/usr/bin/arch-chroot /mnt echo $password | passwd root --stdin")
+            os.system("arch-chroot /mnt /etc/installer/scripts/sddm.sh")
+        os.system("arch-chroot /mnt echo $password | passwd root --stdin")
         os.system(
-            "/usr/bin/arch-chroot /mnt useradd -m -g users -G wheel,storage,power -s /bin/bash "
+            "arch-chroot /mnt useradd -m -g users -G wheel,storage,power -s /bin/bash "
             + choices["username"]
         )
         os.system(
-            "/usr/bin/arch-chroot /mnt echo "
+            "arch-chroot /mnt echo "
             + choices["password"]
             + " | passwd "
             + choices["password"]
