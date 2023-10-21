@@ -216,6 +216,8 @@ class Progressing(tk.Frame):
             "arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot"
         )
         os.system("arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg")
+        os.system("arch-chroot /mnt pacman-key --init")
+        os.system("arch-chroot /mnt pacman-key --populate")
         os.system("arch-chroot /mnt chmod +x /etc/installer/scripts/*")
         os.system("arch-chroot /mnt /etc/installer/scripts/xfce.sh")
         if choices["loginscr"] == "lightdm":
@@ -227,19 +229,19 @@ class Progressing(tk.Frame):
             + choices["password"]
             + "'; echo '"
             + choices["password"]
-            + "') | passwd "
-            + choices["username"]
+            + "') | passwd root"
         )
         os.system(
             "arch-chroot /mnt useradd -m -g users -G wheel,storage,power -s /bin/bash "
             + choices["username"]
         )
         os.system(
-            "arch-chroot /mnt echo "
+            "arch-chroot /mnt (echo '"
             + choices["password"]
-            + " | passwd "
+            + "'; echo '"
             + choices["password"]
-            + " --stdin"
+            + "') | passwd "
+            + choices["username"]
         )
         os.system("umount -R /mnt")
 
