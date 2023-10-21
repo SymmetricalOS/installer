@@ -171,6 +171,7 @@ class Progressing(tk.Frame):
         lb2.place(x=10, y=110)
         prog = ttk.Progressbar(self, mode="indeterminate")
         prog.place(relx=0.05, rely=0.8, relwidth=0.9)
+	def start_the_thread():
         self.thr = th.Thread(target=self.commands)
         self.thr.start()
 
@@ -241,6 +242,7 @@ class Confirm(tk.Frame):
         lb.place(x=10, y=10)
 
         def go_go_go():
+			controller.frames[Progressing].start_the_thread()
             controller.show_frame(Progressing)
 
         self.optionslb = ttk.Label(
