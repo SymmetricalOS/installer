@@ -172,7 +172,7 @@ class Progressing(tk.Frame):
         prog = ttk.Progressbar(self, mode="indeterminate")
         prog.place(relx=0.05, rely=0.8, relwidth=0.9)
 
-    def start_the_thread():
+    def start_the_thread(self):
         self.thr = th.Thread(target=self.commands)
         self.thr.start()
 
