@@ -36,7 +36,7 @@ def run_commands_file(filename):
         data = f.read().split("\n")
     for command in data:
         try:
-            sp.run(command, check=True)
+            os.system(command, check=True)
         except:
             return False
     return True
@@ -171,6 +171,8 @@ class Progressing(tk.Frame):
         lb2.place(x=10, y=110)
         prog = ttk.Progressbar(self, mode="indeterminate")
         prog.place(relx=0.05, rely=0.8, relwidth=0.9)
+
+    def start_the_thread(self):
         self.thr = th.Thread(target=self.commands)
         self.thr.start()
 
@@ -178,12 +180,12 @@ class Progressing(tk.Frame):
         if not prod:
             return
 
-        sp.call(
-            f"parted /dev/{choices['disk']} mklabel gpt ---pretend-input-tty <<EOF\ny\nEOF"
+        os.system(
+            f"/usr/bin/parted /dev/{choices['disk']} mklabel gpt ---pretend-input-tty <<EOF\ny\nEOF"
         )
-        sp.call(f"parted /dev/{choices['disk']} mkpart primary 1024M 1536M")
-        sp.call(f"parted /dev/{choices['disk']} mkpart primary 1536M 100%")
-        sp.call(f"parted /dev/{choices['disk']} set 1 boot on")
+        os.system(f"/usr/bin/parted /dev/{choices['disk']} mkpart primary 1024M 1536M")
+        os.system(f"/usr/bin/parted /dev/{choices['disk']} mkpart primary 1536M 100%")
+        os.system(f"/usr/bin/parted /dev/{choices['disk']} set 1 boot on")
 
         bootpart = choices["disk"] + "1"
         rootpart = choices["disk"] + "2"
@@ -192,46 +194,46 @@ class Progressing(tk.Frame):
             rootpart = choices["disk"] + "p2"
         print(bootpart + " boot")
         print(rootpart + " root")
-        sp.call("mkfs.fat -F 32 /dev/" + bootpart)
-        sp.call("mkfs.ext4 /dev/" + rootpart)
+        os.system("/usr/bin/mkfs.fat -F 32 /dev/" + bootpart)
+        os.system("/usr/bin/mkfs.ext4 /dev/" + rootpart)
 
-        sp.call("mount /dev/" + rootpart + " /mnt")
-        sp.call("mount --mkdir /dev/" + bootpart + " /mnt/boot")
+        os.system("/usr/bin/mount /dev/" + rootpart + " /mnt")
+        os.system("/usr/bin/mount --mkdir /dev/" + bootpart + " /mnt/boot")
 
         if not offline:
-            sp.call(
-                "pacstrap /mnt kernel kernel-firmware symmos symmos-boot symmos-networking"
+            os.system(
+                "/usr/bin/pacstrap /mnt kernel kernel-firmware symmos symmos-boot symmos-networking"
             )
         else:
             # TODO
             pass
-        sp.call("genfstab -U /mnt >> /mnt/etc/fstab")
-        sp.call("mkdir -p /mnt/etc/installer/scripts")
-        sp.call("cp -r /etc/installer/scripts /mnt/etc/installer/")
-        sp.call("cp -r /etc/installer/sysrootfs /mnt")
-        sp.call("arch-chroot /mnt mkinitcpio -P")
-        sp.call(
-            "arch-chroot /mnt grub-install --target=x86_64-efi --efi-direcotry=/boot"
+        os.system("/usr/bin/genfstab -U /mnt >> /mnt/etc/fstab")
+        os.system("/usr/bin/mkdir -p /mnt/etc/installer/scripts")
+        os.system("/usr/bin/cp -r /etc/installer/scripts /mnt/etc/installer/")
+        os.system("/usr/bin/cp -r /etc/installer/sysrootfs /mnt")
+        os.system("/usr/bin/arch-chroot /mnt mkinitcpio -P")
+        os.system(
+            "/usr/bin/arch-chroot /mnt grub-install --target=x86_64-efi --efi-direcotry=/boot"
         )
-        sp.call("arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg")
-        sp.call("arch-chroot /mnt /etc/installer/scripts/xfce.sh")
+        os.system("/usr/bin/arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg")
+        os.system("/usr/bin/arch-chroot /mnt /etc/installer/scripts/xfce.sh")
         if choices.loginscr == "lightdm":
-            sp.call("arch-chroot /mnt /etc/installer/scripts/lightdm.sh")
+            os.system("/usr/bin/arch-chroot /mnt /etc/installer/scripts/lightdm.sh")
         else:
-            sp.call("arch-chroot /mnt /etc/installer/scripts/sddm.sh")
-        sp.call("arch-chroot /mnt echo $password | passwd root --stdin")
-        sp.call(
-            "arch-chroot /mnt useradd -m -g users -G wheel,storage,power -s /bin/bash "
+            os.system("/usr/bin/arch-chroot /mnt /etc/installer/scripts/sddm.sh")
+        os.system("/usr/bin/arch-chroot /mnt echo $password | passwd root --stdin")
+        os.system(
+            "/usr/bin/arch-chroot /mnt useradd -m -g users -G wheel,storage,power -s /bin/bash "
             + choices["username"]
         )
-        sp.call(
-            "arch-chroot /mnt echo "
+        os.system(
+            "/usr/bin/arch-chroot /mnt echo "
             + choices["password"]
             + " | passwd "
             + choices["password"]
             + " --stdin"
         )
-        sp.call("umount -R /mnt")
+        os.system("umount -R /mnt")
 
 
 class Confirm(tk.Frame):
@@ -241,6 +243,7 @@ class Confirm(tk.Frame):
         lb.place(x=10, y=10)
 
         def go_go_go():
+            controller.frames[Progressing].start_the_thread()
             controller.show_frame(Progressing)
 
         self.optionslb = ttk.Label(
@@ -492,9 +495,9 @@ class installer(tk.Tk):
 
 
 def run(command):
-    rc = sp.run(command)
+    rc = os.system(command)
     if rc.returncode != 0:
-        sp.run("umount -R /mnt")
+        os.system("umount -R /mnt")
     return rc.returncode == 0
 
 
