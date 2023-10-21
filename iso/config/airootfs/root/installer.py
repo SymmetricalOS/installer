@@ -185,18 +185,18 @@ class Progressing(tk.Frame):
         sp.call(f"parted /dev/{choices['disk']} mkpart primary 1536M 100%")
         sp.call(f"parted /dev/{choices['disk']} set 1 boot on")
 
-        bootpart = choices.disk + "1"
-        rootpart = choices.disk + "2"
-        if choices.disk.startswith("nvme"):
-            bootpart = choices.disk + "p1"
-            rootpart = choices.disk + "p2"
-        print(bootpart)
-        print(rootpart)
-        sp.call(f"mkfs.fat -F 32 /dev/{bootpart}")
-        sp.call(f"mkfs.ext4 /dev/{rootpart}")
+        bootpart = choices["disk"] + "1"
+        rootpart = choices["disk"] + "2"
+        if choices["disk"].startswith("nvme"):
+            bootpart = choices["disk"] + "p1"
+            rootpart = choices["disk"] + "p2"
+        print(bootpart + " boot")
+        print(rootpart + " root")
+        sp.call("mkfs.fat -F 32 /dev/" + bootpart)
+        sp.call("mkfs.ext4 /dev/" + rootpart)
 
-        sp.call(f"mount /dev/{rootpart} /mnt")
-        sp.call(f"mount --mkdir /dev/{bootpart} /mnt/boot")
+        sp.call("mount /dev/" + rootpart + " /mnt")
+        sp.call("mount --mkdir /dev/" + bootpart + " /mnt/boot")
 
         if not offline:
             sp.call(
@@ -221,10 +221,15 @@ class Progressing(tk.Frame):
             sp.call("arch-chroot /mnt /etc/installer/scripts/sddm.sh")
         sp.call("arch-chroot /mnt echo $password | passwd root --stdin")
         sp.call(
-            f"arch-chroot /mnt useradd -m -g users -G wheel,storage,power -s /bin/bash {choices['username']}"
+            "arch-chroot /mnt useradd -m -g users -G wheel,storage,power -s /bin/bash "
+            + choices["username"]
         )
         sp.call(
-            f"arch-chroot /mnt echo {choices['password']} | passwd {choices['password']} --stdin"
+            "arch-chroot /mnt echo "
+            + choices["password"]
+            + " | passwd "
+            + choices["password"]
+            + " --stdin"
         )
         sp.call("umount -R /mnt")
 
