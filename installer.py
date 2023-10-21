@@ -1,11 +1,11 @@
-import subprocess as sp
-import requests as r
+import os
+import re
 import tkinter as tk
 import tkinter.ttk as ttk
 import threading as th
+import subprocess as sp
+import requests as r
 import psutil as ps
-import os
-import re
 
 offline = os.path.exists("/etc/installer/offline")
 
@@ -47,11 +47,7 @@ def has_number_at_end(input_string):
     pattern = r"\d$"
 
     # Use re.search() to find the pattern at the end of the string
-    if re.search(pattern, input_string):
-        return True
-    else:
-        return False
-
+    return re.search(pattern, input_string)
 
 def checkthing(e: str):
     if e.startswith("nvme"):
@@ -495,9 +491,9 @@ class installer(tk.Tk):
 
 
 def run(command):
-    rc = sp.run(command)
+    rc = sp.run(command, check=False)
     if rc.returncode != 0:
-        sp.run("umount -R /mnt")
+        sp.run("umount -R /mnt", check=False)
     return rc.returncode == 0
 
 
