@@ -6,6 +6,7 @@ import threading as th
 import subprocess as sp
 import requests as r
 import psutil as ps
+import time
 
 offline = os.path.exists("/etc/installer/offline")
 
@@ -13,10 +14,10 @@ bigger = True
 
 prod = True
 
-font = ("Legato Sans", 14)
-fontbig = ("Legato Sans", 35)
-font2 = ("Legato Sans", 24)
-fontbig2 = ("Legato Sans", 55)
+font = ("Legato Sans", 12)
+fontbig = ("Legato Sans", 33)
+font2 = ("Legato Sans", 22)
+fontbig2 = ("Legato Sans", 53)
 if bigger:
     font = font2
     fontbig = fontbig2
@@ -165,10 +166,13 @@ class Progressing(tk.Frame):
         progress_total_var = 25
         self.progress_amount = tk.IntVar(self, 0)
         self.progress_total = tk.IntVar(self, progress_total_var)
+        self.label_text = tk.StringVar(self, "Installing will begin shortly...")
         lb = ttk.Label(self, text="Installing Symmetrical OS", font=fontbig)
         lb.place(x=10, y=10)
         lb2 = ttk.Label(self, text="This may take a while.", font=font)
         lb2.place(x=10, y=110)
+        lb3 = ttk.Label(self, textvariable=self.label_text, font=font)
+        lb3.place(x=10, rely=0.8, y=-80)
         prog = ttk.Progressbar(
             self, variable=self.progress_amount, maximum=progress_total_var
         )
@@ -182,10 +186,12 @@ class Progressing(tk.Frame):
         if not prod:
             return
 
+        self.label_text.set("Creating GPT partition table")
         os.system(
             f"/usr/bin/parted /dev/{choices['disk']} mklabel gpt ---pretend-input-tty <<EOF\ny\nEOF"
         )
         self.progress_amount.set(self.progress_amount.get() + 1)
+        self.label_text.set("Creating partitions")
         os.system(f"/usr/bin/parted /dev/{choices['disk']} mkpart primary 1024M 1536M")
         self.progress_amount.set(self.progress_amount.get() + 1)
         os.system(f"/usr/bin/parted /dev/{choices['disk']} mkpart primary 1536M 100%")
@@ -198,16 +204,19 @@ class Progressing(tk.Frame):
         if choices["disk"].startswith("nvme"):
             bootpart = choices["disk"] + "p1"
             rootpart = choices["disk"] + "p2"
+        self.label_text.set("Formatting partitions")
         os.system("/usr/bin/mkfs.fat -F 32 /dev/" + bootpart)
         self.progress_amount.set(self.progress_amount.get() + 1)
         os.system("/usr/bin/mkfs.ext4 /dev/" + rootpart)
         self.progress_amount.set(self.progress_amount.get() + 1)
 
+        self.label_text.set("Mounting partitions")
         os.system("/usr/bin/mount /dev/" + rootpart + " /mnt")
         self.progress_amount.set(self.progress_amount.get() + 1)
         os.system("/usr/bin/mount --mkdir /dev/" + bootpart + " /mnt/boot")
         self.progress_amount.set(self.progress_amount.get() + 1)
 
+        self.label_text.set("Installing system")
         if not offline:
             # os.system(
             #     "pacstrap /mnt kernel kernel-firmware symmos symmos-boot symmos-networking"
@@ -219,28 +228,36 @@ class Progressing(tk.Frame):
             # TODO
             pass
         self.progress_amount.set(self.progress_amount.get() + 1)
+        self.label_text.set("Generating fstab")
         os.system("genfstab -U /mnt >> /mnt/etc/fstab")
         self.progress_amount.set(self.progress_amount.get() + 1)
+        self.label_text.set("Copying files")
         os.system("mkdir -p /mnt/etc/installer/scripts")
         self.progress_amount.set(self.progress_amount.get() + 1)
         os.system("cp -r /etc/installer/scripts /mnt/etc/installer/")
         self.progress_amount.set(self.progress_amount.get() + 1)
         os.system("cp -r /etc/installer/sysrootfs /mnt")
         self.progress_amount.set(self.progress_amount.get() + 1)
+        self.label_text.set("Creating initramfs")
         os.system("arch-chroot /mnt mkinitcpio -P")
         self.progress_amount.set(self.progress_amount.get() + 1)
+        self.label_text.set("Installing boot loader")
         os.system(
             "arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot"
         )
         self.progress_amount.set(self.progress_amount.get() + 1)
+        self.label_text.set("Configuring boot loader")
         os.system("arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg")
         self.progress_amount.set(self.progress_amount.get() + 1)
+        self.label_text.set("Generating pacman keyring")
         os.system("arch-chroot /mnt pacman-key --init")
         self.progress_amount.set(self.progress_amount.get() + 1)
         os.system("arch-chroot /mnt pacman-key --populate")
         self.progress_amount.set(self.progress_amount.get() + 1)
+        self.label_text.set("Preparing scripts")
         os.system("arch-chroot /mnt chmod +x /etc/installer/scripts/*")
         self.progress_amount.set(self.progress_amount.get() + 1)
+        self.label_text.set("Installing graphical environment")
         os.system("arch-chroot /mnt /etc/installer/scripts/xfce.sh")
         self.progress_amount.set(self.progress_amount.get() + 1)
         if choices["loginscr"] == "lightdm":
@@ -248,6 +265,7 @@ class Progressing(tk.Frame):
         else:
             os.system("arch-chroot /mnt /etc/installer/scripts/sddm.sh")
         self.progress_amount.set(self.progress_amount.get() + 1)
+        self.label_text.set("Creating user accounts")
         os.system(
             'arch-chroot /mnt echo -e "'
             + choices["password"]
@@ -262,16 +280,19 @@ class Progressing(tk.Frame):
         )
         self.progress_amount.set(self.progress_amount.get() + 1)
         os.system(
-            'arch-chroot /mnt echo -e "'
-            + choices["password"]
-            + "\n"
-            + choices["password"]
-            + '" | passwd '
-            + choices["username"]
+            f"arch-chroot /mnt echo -e \"{choices['password']}\\n{choices['password']}\" | passwd {choices['username']}"
         )
         self.progress_amount.set(self.progress_amount.get() + 1)
+        self.label_text.set("Cleaning up")
         os.system("umount -R /mnt")
         self.progress_amount.set(self.progress_amount.get() + 1)
+        for i in range(10):
+            self.label_text.set(
+                f"Finished! Rebooting in {10-i}. Please remove the installation medium."
+            )
+            time.sleep(1)
+        self.label_text.set("Rebooting")
+        # os.system("reboot")
 
 
 class Confirm(tk.Frame):
