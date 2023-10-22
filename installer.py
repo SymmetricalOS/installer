@@ -162,11 +162,16 @@ class Network(tk.Frame):
 class Progressing(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
+        progress_total_var = 25
+        self.progress_amount = tk.IntVar(self, 0)
+        self.progress_total = tk.IntVar(self, progress_total_var)
         lb = ttk.Label(self, text="Installing Symmetrical OS", font=fontbig)
         lb.place(x=10, y=10)
         lb2 = ttk.Label(self, text="This may take a while.", font=font)
         lb2.place(x=10, y=110)
-        prog = ttk.Progressbar(self, mode="indeterminate")
+        prog = ttk.Progressbar(
+            self, variable=self.progress_amount, maximum=progress_total_var
+        )
         prog.place(relx=0.05, rely=0.8, relwidth=0.9)
 
     def start_the_thread(self):
@@ -180,70 +185,93 @@ class Progressing(tk.Frame):
         os.system(
             f"/usr/bin/parted /dev/{choices['disk']} mklabel gpt ---pretend-input-tty <<EOF\ny\nEOF"
         )
+        self.progress_amount.set(self.progress_amount.get() + 1)
         os.system(f"/usr/bin/parted /dev/{choices['disk']} mkpart primary 1024M 1536M")
+        self.progress_amount.set(self.progress_amount.get() + 1)
         os.system(f"/usr/bin/parted /dev/{choices['disk']} mkpart primary 1536M 100%")
+        self.progress_amount.set(self.progress_amount.get() + 1)
         os.system(f"/usr/bin/parted /dev/{choices['disk']} set 1 boot on")
+        self.progress_amount.set(self.progress_amount.get() + 1)
 
         bootpart = choices["disk"] + "1"
         rootpart = choices["disk"] + "2"
         if choices["disk"].startswith("nvme"):
             bootpart = choices["disk"] + "p1"
             rootpart = choices["disk"] + "p2"
-        print(bootpart + " boot")
-        print(rootpart + " root")
         os.system("/usr/bin/mkfs.fat -F 32 /dev/" + bootpart)
+        self.progress_amount.set(self.progress_amount.get() + 1)
         os.system("/usr/bin/mkfs.ext4 /dev/" + rootpart)
+        self.progress_amount.set(self.progress_amount.get() + 1)
 
         os.system("/usr/bin/mount /dev/" + rootpart + " /mnt")
+        self.progress_amount.set(self.progress_amount.get() + 1)
         os.system("/usr/bin/mount --mkdir /dev/" + bootpart + " /mnt/boot")
+        self.progress_amount.set(self.progress_amount.get() + 1)
 
         if not offline:
             # os.system(
             #     "pacstrap /mnt kernel kernel-firmware symmos symmos-boot symmos-networking"
             # )
             os.system(
-                "pacstrap /mnt linux linux-firmware base base-devel grub networkmanager iwd"
+                "pacstrap /mnt linux linux-firmware base base-devel grub efibootmgr networkmanager iwd"
             )
         else:
             # TODO
             pass
+        self.progress_amount.set(self.progress_amount.get() + 1)
         os.system("genfstab -U /mnt >> /mnt/etc/fstab")
+        self.progress_amount.set(self.progress_amount.get() + 1)
         os.system("mkdir -p /mnt/etc/installer/scripts")
+        self.progress_amount.set(self.progress_amount.get() + 1)
         os.system("cp -r /etc/installer/scripts /mnt/etc/installer/")
+        self.progress_amount.set(self.progress_amount.get() + 1)
         os.system("cp -r /etc/installer/sysrootfs /mnt")
+        self.progress_amount.set(self.progress_amount.get() + 1)
         os.system("arch-chroot /mnt mkinitcpio -P")
+        self.progress_amount.set(self.progress_amount.get() + 1)
         os.system(
             "arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot"
         )
+        self.progress_amount.set(self.progress_amount.get() + 1)
         os.system("arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg")
+        self.progress_amount.set(self.progress_amount.get() + 1)
         os.system("arch-chroot /mnt pacman-key --init")
+        self.progress_amount.set(self.progress_amount.get() + 1)
         os.system("arch-chroot /mnt pacman-key --populate")
+        self.progress_amount.set(self.progress_amount.get() + 1)
         os.system("arch-chroot /mnt chmod +x /etc/installer/scripts/*")
+        self.progress_amount.set(self.progress_amount.get() + 1)
         os.system("arch-chroot /mnt /etc/installer/scripts/xfce.sh")
+        self.progress_amount.set(self.progress_amount.get() + 1)
         if choices["loginscr"] == "lightdm":
             os.system("arch-chroot /mnt /etc/installer/scripts/lightdm.sh")
         else:
             os.system("arch-chroot /mnt /etc/installer/scripts/sddm.sh")
+        self.progress_amount.set(self.progress_amount.get() + 1)
         os.system(
-            "arch-chroot /mnt (echo '"
+            'arch-chroot /mnt echo -e "'
             + choices["password"]
-            + "'; echo '"
+            + "\n"
             + choices["password"]
-            + "') | passwd root"
+            + '" | passwd root'
         )
+        self.progress_amount.set(self.progress_amount.get() + 1)
         os.system(
             "arch-chroot /mnt useradd -m -g users -G wheel,storage,power -s /bin/bash "
             + choices["username"]
         )
+        self.progress_amount.set(self.progress_amount.get() + 1)
         os.system(
-            "arch-chroot /mnt (echo '"
+            'arch-chroot /mnt echo -e "'
             + choices["password"]
-            + "'; echo '"
+            + "\n"
             + choices["password"]
-            + "') | passwd "
+            + '" | passwd '
             + choices["username"]
         )
+        self.progress_amount.set(self.progress_amount.get() + 1)
         os.system("umount -R /mnt")
+        self.progress_amount.set(self.progress_amount.get() + 1)
 
 
 class Confirm(tk.Frame):
@@ -467,7 +495,7 @@ class installer(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
 
         self.title("Symmetrical OS Installer")
-        self.geometry("800x600")
+        self.geometry("1280x720")
 
         # the top part
         # other = tk.Frame(self, height=(75 if not bigger else 125))
