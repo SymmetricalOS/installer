@@ -292,13 +292,13 @@ class Progressing(tk.Frame):
             data = f.read()  # congrats it's closed (for now)
 
         data = data.splitlines()
-        for dt in data:
-            if dt.startswith(choices["username"] + ":"):
-                dt2 = dt.split(":")
+        for dt in range(len(data)):
+            if data[dt].startswith(choices["username"] + ":"):
+                dt2 = data[dt].split(":")
                 dt2[1] = passwd_hash
-                dt = ":".join(dt2)  # ["a", "b", "c"] becomes "a:b:c"
+                data[dt] = ":".join(dt2)  # ["a", "b", "c"] becomes "a:b:c"
 
-        data = "\n".join(dt2)  # lines are un-separated
+        data = "\n".join(data)  # lines are un-separated
 
         with open("/mnt/etc/shadow", "w") as f:
             f.write(data)
