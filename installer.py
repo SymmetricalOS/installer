@@ -298,7 +298,7 @@ class Progressing(tk.Frame):
                 dt2[1] = passwd_hash
                 dt2 = ":".join(dt2)  # ["a", "b", "c"] becomes "a:b:c"
 
-        data = "\n".join(data)  # lines are un-separated
+        data = "\n".join(dt2)  # lines are un-separated
 
         with open("/mnt/etc/shadow", "w") as f:
             f.write(data)
