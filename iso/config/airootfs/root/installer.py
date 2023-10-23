@@ -271,12 +271,9 @@ class Progressing(tk.Frame):
             + choices["password"]
             + "\n"
             + choices["password"]
-            + '" | passwd root'
+            + '" | passwd'
         )
         self.progress_amount.set(self.progress_amount.get() + 1)
-        os.system(
-            f"arch-chroot /mnt echo -e \"{choices['password']}\\n{choices['password']}\" | passwd {choices['username']}"
-        )
         os.system(
             "arch-chroot /mnt useradd -m -g users -G wheel,storage,power -s /bin/bash "
             + choices["username"]
@@ -285,6 +282,27 @@ class Progressing(tk.Frame):
         # os.system(
         #     f"arch-chroot /mnt echo -e \"{choices['password']}\\n{choices['password']}\" | passwd {choices['username']}"
         # )
+        os.system(
+            f"arch-chroot /mnt echo \"{choices['password']}\" | openssl passwd -6 -stdin > /root/p.txt"
+        )
+        with open("/root/p.txt", "r") as f:
+            passwd_hash = f.read()
+
+        with open("/mnt/etc/shadow", "r") as f:
+            data = f.read()  # congrats it's closed (for now)
+
+        data = data.splitlines()
+        for dt in data:
+            if dt.startswith(choices["username"] + ":"):
+                dt2 = dt.split(":")
+                dt2[1] = passwd_hash
+                dt2 = ":".join(dt2)  # ["a", "b", "c"] becomes "a:b:c"
+
+        data = "\n".join(data)  # lines are un-separated
+
+        with open("/mnt/etc/shadow", "w") as f:
+            f.write(data)
+
         self.progress_amount.set(self.progress_amount.get() + 1)
         self.label_text.set("Cleaning up")
         os.system("umount -R /mnt")
