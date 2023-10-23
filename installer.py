@@ -296,7 +296,7 @@ class Progressing(tk.Frame):
             if dt.startswith(choices["username"] + ":"):
                 dt2 = dt.split(":")
                 dt2[1] = passwd_hash
-                dt2 = ":".join(dt2)  # ["a", "b", "c"] becomes "a:b:c"
+                dt = ":".join(dt2)  # ["a", "b", "c"] becomes "a:b:c"
 
         data = "\n".join(dt2)  # lines are un-separated
 
