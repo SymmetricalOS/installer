@@ -264,6 +264,7 @@ class Progressing(tk.Frame):
         self.progress_amount.set(self.progress_amount.get() + 1)
         self.label_text.set("Copying files")
         os.system("cp -r /etc/installer/sysrootfs/* /mnt/")
+        os.system("arch-chroot /mnt pacman -Syy")
         self.progress_amount.set(self.progress_amount.get() + 1)
         self.label_text.set("Installing graphical environment")
         os.system("arch-chroot /mnt /etc/installer/scripts/xfce.sh")
