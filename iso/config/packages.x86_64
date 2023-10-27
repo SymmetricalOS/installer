@@ -28,3 +28,4 @@ wireless-regdb
 wireless_tools
 wpa_supplicant
 iwd
+perl-crypt-passwdmd5

@@ -282,11 +282,12 @@ class Progressing(tk.Frame):
         # os.system(
         #     f"arch-chroot /mnt echo -e \"{choices['password']}\\n{choices['password']}\" | passwd {choices['username']}"
         # )
-        os.system(
-            f"arch-chroot /mnt echo \"{choices['password']}\" | openssl passwd -6 -stdin > /root/p.txt"
-        )
+        os.system(f"sha1pass {choices['password']} > /root/p.txt")
+        os.system(f"echo {choices['password']}")
         with open("/root/p.txt", "r") as f:
             passwd_hash = f.read()
+
+        passwd_hash = passwd_hash.replace("\n", "")
 
         with open("/mnt/etc/shadow", "r") as f:
             data = f.read()  # congrats it's closed (for now)
@@ -300,9 +301,13 @@ class Progressing(tk.Frame):
 
         data = "\n".join(data)  # lines are un-separated
 
-        with open("/mnt/etc/shadow", "w") as f:
-            f.write(data)
-
+        # with open("/mnt/etc/shadow", "w") as f:
+        #     f.write(data)
+        sp.run(
+            f"/usr/bin/passwd {choices['username']}",
+            stdout=sp.PIPE,
+            input=f"{choices['password']}\n{choices['password']}\n",
+        )
         self.progress_amount.set(self.progress_amount.get() + 1)
         self.label_text.set("Cleaning up")
         os.system("umount -R /mnt")

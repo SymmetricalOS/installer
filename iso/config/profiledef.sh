@@ -3,9 +3,9 @@
 
 iso_name="symmos"
 iso_version="$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y.%m.%d)"
-iso_label="symmos_$iso_version"
+iso_label="$iso_name-$iso_version-ONLINE"
 iso_publisher="Symmetrical OS <https://github.com/SymmetricalOS>"
-iso_application="Symmetrical OS Installer"
+iso_application="Symmetrical OS Online Installer"
 install_dir="arch"
 buildmodes=('iso')
 bootmodes=('bios.syslinux.mbr' 'bios.syslinux.eltorito'
