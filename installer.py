@@ -282,32 +282,14 @@ class Progressing(tk.Frame):
         # os.system(
         #     f"arch-chroot /mnt echo -e \"{choices['password']}\\n{choices['password']}\" | passwd {choices['username']}"
         # )
-        os.system(f"sha1pass {choices['password']} > /root/p.txt")
-        os.system(f"echo {choices['password']}")
-        with open("/root/p.txt", "r") as f:
-            passwd_hash = f.read()
-
-        passwd_hash = passwd_hash.replace("\n", "")
-
-        with open("/mnt/etc/shadow", "r") as f:
-            data = f.read()  # congrats it's closed (for now)
-
-        data = data.splitlines()
-        for dt in range(len(data)):
-            if data[dt].startswith(choices["username"] + ":"):
-                dt2 = data[dt].split(":")
-                dt2[1] = passwd_hash
-                data[dt] = ":".join(dt2)  # ["a", "b", "c"] becomes "a:b:c"
-
-        data = "\n".join(data)  # lines are un-separated
 
         # with open("/mnt/etc/shadow", "w") as f:
         #     f.write(data)
         sp.run(
             f"/usr/bin/passwd {choices['username']}",
             stdout=sp.PIPE,
-            input=f"{choices['password']}\n{choices['password']}\n".encode("ascii"),
-            shell=True,
+            input=f"{choices['password']}\n{choices['password']}\n".encode(),
+            shell=True
         )
         self.progress_amount.set(self.progress_amount.get() + 1)
         self.label_text.set("Cleaning up")
