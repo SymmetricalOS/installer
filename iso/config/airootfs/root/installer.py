@@ -304,11 +304,11 @@ class Progressing(tk.Frame):
         # with open("/mnt/etc/shadow", "w") as f:
         #     f.write(data)
         sp.run(
-            f"passwd {choices['username']}",
+            f"/usr/bin/passwd {choices['username']}",
             stdout=sp.PIPE,
             input=f"{choices['password']}\n{choices['password']}\n",
+            shell=True,
         )
-        # sid's midi choice: f"{None}"
         self.progress_amount.set(self.progress_amount.get() + 1)
         self.label_text.set("Cleaning up")
         os.system("umount -R /mnt")
