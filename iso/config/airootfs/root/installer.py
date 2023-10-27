@@ -218,12 +218,12 @@ class Progressing(tk.Frame):
 
         self.label_text.set("Installing system")
         if not offline:
-            # os.system(
-            #     "pacstrap /mnt kernel kernel-firmware symmos symmos-boot symmos-networking"
-            # )
             os.system(
-                "pacstrap /mnt linux linux-firmware base base-devel grub efibootmgr networkmanager iwd"
+                "pacstrap /mnt kernel kernel-firmware symmos symmos-boot symmos-networking"
             )
+            # os.system(
+            #     "pacstrap /mnt linux linux-firmware base base-devel grub efibootmgr networkmanager iwd"
+            # )
         else:
             # TODO
             pass
@@ -279,30 +279,6 @@ class Progressing(tk.Frame):
             + choices["username"]
         )
         self.progress_amount.set(self.progress_amount.get() + 1)
-        # os.system(
-        #     f"arch-chroot /mnt echo -e \"{choices['password']}\\n{choices['password']}\" | passwd {choices['username']}"
-        # )
-        os.system(f"sha1pass {choices['password']} > /root/p.txt")
-        os.system(f"echo {choices['password']}")
-        with open("/root/p.txt", "r") as f:
-            passwd_hash = f.read()
-
-        passwd_hash = passwd_hash.replace("\n", "")
-
-        with open("/mnt/etc/shadow", "r") as f:
-            data = f.read()  # congrats it's closed (for now)
-
-        data = data.splitlines()
-        for dt in range(len(data)):
-            if data[dt].startswith(choices["username"] + ":"):
-                dt2 = data[dt].split(":")
-                dt2[1] = passwd_hash
-                data[dt] = ":".join(dt2)  # ["a", "b", "c"] becomes "a:b:c"
-
-        data = "\n".join(data)  # lines are un-separated
-
-        # with open("/mnt/etc/shadow", "w") as f:
-        #     f.write(data)
         sp.run(
             f"arch-chroot /mnt passwd {choices['username']}",
             stdout=sp.PIPE,
