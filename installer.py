@@ -401,6 +401,7 @@ class Desktop(tk.Frame):
             text="XFWM",
             value="xfwm",
             command=lambda: print(windowman.get()),
+            state=tk.DISABLED,
         )
         i3 = (
             ttk.Radiobutton(
