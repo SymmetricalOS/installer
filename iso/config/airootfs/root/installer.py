@@ -72,7 +72,7 @@ class Progress(tk.Frame):
 
 class Overview(tk.Frame):
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
+        tk.Frame.__init__(self, parent, cursor="arrow")
         # welcometxt = "Welcome to the Symmetrical OS installer!\nAt the top, you will see the progress display.\nThis will show you what you are going to be setting up during the installation process.\nPress Next to start the setup."
         welcometxt = "Welcome to the Symmetrical OS installer!\nAfter this installer is complete, you will be able to use Symmetrical OS.\nPress Next to start the setup."
 
@@ -186,6 +186,11 @@ class Progressing(tk.Frame):
         if not prod:
             return
 
+        self.label_text.set("Preparing mirrors")
+        os.system(
+            'echo -e "\n[symmos]\nServer = https://symmetricalos.github.io/packages/$arch\nSigLevel = Optional TrustAll\n" >> /etc/pacman.conf'
+        )
+        os.system("pacman -Sy --noconfirm")
         self.label_text.set("Creating GPT partition table")
         os.system(
             f"/usr/bin/parted /dev/{choices['disk']} mklabel gpt ---pretend-input-tty <<EOF\ny\nEOF"
@@ -219,7 +224,7 @@ class Progressing(tk.Frame):
         self.label_text.set("Installing system")
         if not offline:
             os.system(
-                "pacstrap /mnt kernel kernel-firmware symmos symmos-boot symmos-networking"
+                "pacstrap /mnt linux linux-firmware symmos symmos-boot symmos-networking"
             )
             # os.system(
             #     "pacstrap /mnt linux linux-firmware base base-devel grub efibootmgr networkmanager iwd"
@@ -295,7 +300,7 @@ class Progressing(tk.Frame):
             )
             time.sleep(1)
         self.label_text.set("Rebooting")
-        # os.system("reboot")
+        os.system("reboot")
 
 
 class Confirm(tk.Frame):

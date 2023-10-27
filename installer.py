@@ -186,6 +186,11 @@ class Progressing(tk.Frame):
         if not prod:
             return
 
+        self.label_text.set("Preparing mirrors")
+        os.system(
+            'echo -e "\n[symmos]\nServer = https://symmetricalos.github.io/packages/$arch\nSigLevel = Optional TrustAll\n" >> /etc/pacman.conf'
+        )
+        os.system("pacman -Sy --noconfirm")
         self.label_text.set("Creating GPT partition table")
         os.system(
             f"/usr/bin/parted /dev/{choices['disk']} mklabel gpt ---pretend-input-tty <<EOF\ny\nEOF"
@@ -219,7 +224,7 @@ class Progressing(tk.Frame):
         self.label_text.set("Installing system")
         if not offline:
             os.system(
-                "pacstrap /mnt kernel kernel-firmware symmos symmos-boot symmos-networking"
+                "pacstrap /mnt linux linux-firmware symmos symmos-boot symmos-networking"
             )
             # os.system(
             #     "pacstrap /mnt linux linux-firmware base base-devel grub efibootmgr networkmanager iwd"
