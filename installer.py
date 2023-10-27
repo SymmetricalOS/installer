@@ -279,12 +279,6 @@ class Progressing(tk.Frame):
             + choices["username"]
         )
         self.progress_amount.set(self.progress_amount.get() + 1)
-        # os.system(
-        #     f"arch-chroot /mnt echo -e \"{choices['password']}\\n{choices['password']}\" | passwd {choices['username']}"
-        # )
-
-        # with open("/mnt/etc/shadow", "w") as f:
-        #     f.write(data)
         sp.run(
             f"arch-chroot /mnt passwd {choices['username']}",
             stdout=sp.PIPE,
