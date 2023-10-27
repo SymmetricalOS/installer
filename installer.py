@@ -218,12 +218,12 @@ class Progressing(tk.Frame):
 
         self.label_text.set("Installing system")
         if not offline:
-            # os.system(
-            #     "pacstrap /mnt kernel kernel-firmware symmos symmos-boot symmos-networking"
-            # )
             os.system(
-                "pacstrap /mnt linux linux-firmware base base-devel grub efibootmgr networkmanager iwd"
+                "pacstrap /mnt kernel kernel-firmware symmos symmos-boot symmos-networking"
             )
+            # os.system(
+            #     "pacstrap /mnt linux linux-firmware base base-devel grub efibootmgr networkmanager iwd"
+            # )
         else:
             # TODO
             pass

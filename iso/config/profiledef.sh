@@ -2,8 +2,8 @@
 # shellcheck disable=SC2034
 
 iso_name="symmos"
-iso_version="$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y.%m.%d)"
-iso_label="$iso_name-$iso_version-ONLINE"
+iso_version="$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y.%m.%d)-ONLINE"
+iso_label="$iso_name-$iso_version"
 iso_publisher="Symmetrical OS <https://github.com/SymmetricalOS>"
 iso_application="Symmetrical OS Online Installer"
 install_dir="arch"
