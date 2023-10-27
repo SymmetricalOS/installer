@@ -163,7 +163,7 @@ class Network(tk.Frame):
 class Progressing(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        progress_total_var = 25
+        progress_total_var = 26
         self.progress_amount = tk.IntVar(self, 0)
         self.progress_total = tk.IntVar(self, progress_total_var)
         self.label_text = tk.StringVar(self, "Installing will begin shortly...")
@@ -261,6 +261,9 @@ class Progressing(tk.Frame):
         self.progress_amount.set(self.progress_amount.get() + 1)
         self.label_text.set("Preparing scripts")
         os.system("arch-chroot /mnt chmod +x /etc/installer/scripts/*")
+        self.progress_amount.set(self.progress_amount.get() + 1)
+        self.label_text.set("Copying files")
+        os.system("cp -r /etc/installer/sysrootfs/* /mnt/")
         self.progress_amount.set(self.progress_amount.get() + 1)
         self.label_text.set("Installing graphical environment")
         os.system("arch-chroot /mnt /etc/installer/scripts/xfce.sh")
@@ -401,7 +404,6 @@ class Desktop(tk.Frame):
             text="XFWM",
             value="xfwm",
             command=lambda: print(windowman.get()),
-            state=tk.DISABLED,
         )
         i3 = ttk.Radiobutton(
             self,
@@ -409,6 +411,7 @@ class Desktop(tk.Frame):
             text="i3 (advanced users only, coming soon)",
             value="i3",
             command=lambda: print(windowman.get()),
+            state=tk.DISABLED,
         )
 
         windowman.set("xfwm")

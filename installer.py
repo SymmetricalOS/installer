@@ -262,6 +262,9 @@ class Progressing(tk.Frame):
         self.label_text.set("Preparing scripts")
         os.system("arch-chroot /mnt chmod +x /etc/installer/scripts/*")
         self.progress_amount.set(self.progress_amount.get() + 1)
+        self.label_text.set("Copying files")
+        os.system("cp -r /etc/installer/sysrootfs/* /mnt/")
+        self.progress_amount.set(self.progress_amount.get() + 1)
         self.label_text.set("Installing graphical environment")
         os.system("arch-chroot /mnt /etc/installer/scripts/xfce.sh")
         self.progress_amount.set(self.progress_amount.get() + 1)
@@ -269,9 +272,6 @@ class Progressing(tk.Frame):
             os.system("arch-chroot /mnt /etc/installer/scripts/lightdm.sh")
         else:
             os.system("arch-chroot /mnt /etc/installer/scripts/sddm.sh")
-        self.progress_amount.set(self.progress_amount.get() + 1)
-        self.label_text.set("Copying files")
-        os.system("cp -r /etc/installer/sysrootfs/* /mnt/")
         self.progress_amount.set(self.progress_amount.get() + 1)
         self.label_text.set("Creating user accounts")
         sp.run(
