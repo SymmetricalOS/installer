@@ -401,16 +401,14 @@ class Desktop(tk.Frame):
             text="XFWM",
             value="xfwm",
             command=lambda: print(windowman.get()),
-            state=tk.DISABLED,
         )
-        i3 = (
-            ttk.Radiobutton(
-                self,
-                variable=windowman,
-                text="i3 (advanced users only, coming soon)",
-                value="i3",
-                command=lambda: print(windowman.get()),
-            ),
+        i3 = ttk.Radiobutton(
+            self,
+            variable=windowman,
+            text="i3 (advanced users only, coming soon)",
+            value="i3",
+            command=lambda: print(windowman.get()),
+            state=tk.DISABLED,
         )
 
         windowman.set("xfwm")

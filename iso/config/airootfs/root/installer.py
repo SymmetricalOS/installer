@@ -271,12 +271,11 @@ class Progressing(tk.Frame):
             os.system("arch-chroot /mnt /etc/installer/scripts/sddm.sh")
         self.progress_amount.set(self.progress_amount.get() + 1)
         self.label_text.set("Creating user accounts")
-        os.system(
-            'arch-chroot /mnt echo -e "'
-            + choices["password"]
-            + "\n"
-            + choices["password"]
-            + '" | passwd'
+        sp.run(
+            f"arch-chroot /mnt passwd root",
+            stdout=sp.PIPE,
+            input=f"{choices['password']}\n{choices['password']}\n".encode("ascii"),
+            shell=True,
         )
         self.progress_amount.set(self.progress_amount.get() + 1)
         os.system(
@@ -402,11 +401,12 @@ class Desktop(tk.Frame):
             text="XFWM",
             value="xfwm",
             command=lambda: print(windowman.get()),
+            state=tk.DISABLED,
         )
         i3 = ttk.Radiobutton(
             self,
             variable=windowman,
-            text="i3",
+            text="i3 (advanced users only, coming soon)",
             value="i3",
             command=lambda: print(windowman.get()),
         )
@@ -422,14 +422,14 @@ class Desktop(tk.Frame):
         lightdm = ttk.Radiobutton(
             self,
             variable=login,
-            text="LightDM",
+            text="LightDM (lightweight)",
             value="lightdm",
             command=lambda: print(login.get()),
         )
         sddm = ttk.Radiobutton(
             self,
             variable=login,
-            text="SDDM",
+            text="SDDM (nice looking)",
             value="sddm",
             command=lambda: print(login.get()),
         )
