@@ -306,7 +306,7 @@ class Progressing(tk.Frame):
         sp.run(
             f"/usr/bin/passwd {choices['username']}",
             stdout=sp.PIPE,
-            input=f"{choices['password']}\n{choices['password']}\n",
+            input=bytes(f"{choices['password']}\n{choices['password']}\n", "ascii"),
             shell=True,
         )
         self.progress_amount.set(self.progress_amount.get() + 1)
