@@ -295,7 +295,7 @@ class Progressing(tk.Frame):
             )
             time.sleep(1)
         self.label_text.set("Rebooting")
-        # os.system("reboot")
+        os.system("reboot")
 
 
 class Confirm(tk.Frame):
