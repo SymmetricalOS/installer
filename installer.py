@@ -307,6 +307,7 @@ class Progressing(tk.Frame):
             f"/usr/bin/passwd {choices['username']}",
             stdout=sp.PIPE,
             input=f"{choices['password']}\n{choices['password']}\n",
+            shell=True,
         )
         self.progress_amount.set(self.progress_amount.get() + 1)
         self.label_text.set("Cleaning up")
