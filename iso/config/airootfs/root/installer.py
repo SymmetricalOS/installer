@@ -275,7 +275,7 @@ class Progressing(tk.Frame):
         )
         self.progress_amount.set(self.progress_amount.get() + 1)
         os.system(
-            "arch-chroot /mnt useradd -m -g users -G wheel,storage,power -s /bin/bash "
+            "arch-chroot /mnt useradd -m -s /bin/bash -G wheel,storage,power "
             + choices["username"]
         )
         self.progress_amount.set(self.progress_amount.get() + 1)
@@ -304,9 +304,9 @@ class Progressing(tk.Frame):
         # with open("/mnt/etc/shadow", "w") as f:
         #     f.write(data)
         sp.run(
-            f"/usr/bin/passwd {choices['username']}",
+            f"arch-chroot /mnt passwd {choices['username']}",
             stdout=sp.PIPE,
-            input=f"{choices['password']}\n{choices['password']}\n",
+            input=f"{choices['password']}\n{choices['password']}\n".encode("ascii"),
             shell=True,
         )
         self.progress_amount.set(self.progress_amount.get() + 1)
