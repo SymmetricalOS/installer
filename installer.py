@@ -163,7 +163,7 @@ class Network(tk.Frame):
 class Progressing(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        progress_total_var = 25
+        progress_total_var = 26
         self.progress_amount = tk.IntVar(self, 0)
         self.progress_total = tk.IntVar(self, progress_total_var)
         self.label_text = tk.StringVar(self, "Installing will begin shortly...")
@@ -269,6 +269,9 @@ class Progressing(tk.Frame):
             os.system("arch-chroot /mnt /etc/installer/scripts/lightdm.sh")
         else:
             os.system("arch-chroot /mnt /etc/installer/scripts/sddm.sh")
+        self.progress_amount.set(self.progress_amount.get() + 1)
+        self.label_text.set("Copying files")
+        os.system("cp -r /etc/installer/sysrootfs/* /mnt/")
         self.progress_amount.set(self.progress_amount.get() + 1)
         self.label_text.set("Creating user accounts")
         sp.run(
