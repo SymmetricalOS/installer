@@ -271,12 +271,11 @@ class Progressing(tk.Frame):
             os.system("arch-chroot /mnt /etc/installer/scripts/sddm.sh")
         self.progress_amount.set(self.progress_amount.get() + 1)
         self.label_text.set("Creating user accounts")
-        os.system(
-            'arch-chroot /mnt echo -e "'
-            + choices["password"]
-            + "\n"
-            + choices["password"]
-            + '" | passwd'
+        sp.run(
+            f"arch-chroot /mnt passwd root",
+            stdout=sp.PIPE,
+            input=f"{choices['password']}\n{choices['password']}\n".encode("ascii"),
+            shell=True,
         )
         self.progress_amount.set(self.progress_amount.get() + 1)
         os.system(
