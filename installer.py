@@ -424,14 +424,14 @@ class Desktop(tk.Frame):
         lightdm = ttk.Radiobutton(
             self,
             variable=login,
-            text="LightDM",
+            text="LightDM (lightweight)",
             value="lightdm",
             command=lambda: print(login.get()),
         )
         sddm = ttk.Radiobutton(
             self,
             variable=login,
-            text="SDDM",
+            text="SDDM (nice looking)",
             value="sddm",
             command=lambda: print(login.get()),
         )
