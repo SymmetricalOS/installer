@@ -163,7 +163,7 @@ class Network(tk.Frame):
 class Progressing(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        progress_total_var = 26
+        progress_total_var = 27
         self.progress_amount = tk.IntVar(self, 0)
         self.progress_total = tk.IntVar(self, progress_total_var)
         self.label_text = tk.StringVar(self, "Installing will begin shortly...")
@@ -293,6 +293,9 @@ class Progressing(tk.Frame):
             input=f"{choices['password']}\n{choices['password']}\n".encode("ascii"),
             shell=True,
         )
+        self.progress_amount.set(self.progress_amount.get() + 1)
+        self.label_text.set("Enabling services")
+        os.system("arch-chroot /mnt systemctl enable NetworkManager.service")
         self.progress_amount.set(self.progress_amount.get() + 1)
         self.label_text.set("Cleaning up")
         os.system("umount -R /mnt")
