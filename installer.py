@@ -12,7 +12,7 @@ offline = os.path.exists("/etc/installer/offline")
 
 bigger = True
 
-prod = True
+prod = False
 
 font = ("Legato Sans", 12)
 fontbig = ("Legato Sans", 33)
@@ -534,20 +534,20 @@ class installer(tk.Tk):
         self.geometry("1280x720")
 
         # the top part
-        # other = tk.Frame(self, height=(75 if not bigger else 125))
-        # other.pack(side="top", fill="x", expand=False)
+        other = tk.Frame(self, height=(75 if not bigger else 125))
+        other.pack(side="top", fill="x", expand=False)
 
-        # prog = Progress(other, self)
-        # prog.place(x=0, y=0, relwidth=1, relheight=1)
+        prog = Progress(other, self)
+        prog.place(x=0, y=0, relwidth=1, relheight=1)
 
         # creating a container
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
         # container.place(relx=0, rely=0, relwidth=1, relheight=1)
 
-        # container.grid_rowconfigure(1, weight=4)
-        # container.grid_rowconfigure(0, weight=1)
-        # container.grid_columnconfigure(0, weight=1)
+        container.grid_rowconfigure(1, weight=4)
+        container.grid_rowconfigure(0, weight=1)
+        container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
 
@@ -556,7 +556,7 @@ class installer(tk.Tk):
 
             self.frames[F] = frame
 
-            # frame.grid(row=0, column=0, sticky="nsew")
+            frame.grid(row=0, column=0, sticky="nsew")
             frame.place(relx=0, rely=0, relwidth=1, relheight=1)
 
         self.show_frame(Overview)
