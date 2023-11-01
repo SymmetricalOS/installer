@@ -1,12 +1,20 @@
 #test_command sudo virsh --connect qemu:///system start "archlinux-2" && sudo virt-manager --connect qemu:///system --show-domain-console "archlinux-2"
 
 sudo rm -rf bin/iso/
-sudo rm -rf iso/config/airootfs/etc/installer/
+sudo rm -rf iso/online/airootfs/etc/installer/
+sudo rm -rf iso/offline/airootfs/etc/installer/
 haxe build.hxml
-mkdir -p iso/config/airootfs/etc/installer/scripts/
-cp -r scripts/ iso/config/airootfs/etc/installer/
-cp -r sysrootfs/ iso/config/airootfs/etc/installer/
-mkdir -p iso/config/airootfs/root/installer/
-cp -r bin/hxwidgets/ iso/config/airootfs/root/installer/
-cp installer.py iso/config/airootfs/root/installer.py
-sudo mkarchiso -v -w bin/iso/ -o bin/iso/ iso/config/
+mkdir -p iso/online/airootfs/etc/installer/scripts/
+mkdir -p iso/offline/airootfs/etc/installer/scripts/
+cp -r scripts/ iso/online/airootfs/etc/installer/
+cp -r scripts/ iso/offline/airootfs/etc/installer/
+cp -r sysrootfs/ iso/online/airootfs/etc/installer/
+cp -r sysrootfs/ iso/offline/airootfs/etc/installer/
+mkdir -p iso/online/airootfs/root/installer/
+mkdir -p iso/offline/airootfs/root/installer/
+cp -r bin/hxwidgets/ iso/online/airootfs/root/installer/
+cp -r bin/hxwidgets/ iso/offline/airootfs/root/installer/
+cp installer.py iso/online/airootfs/root/installer.py
+cp installer.py iso/offline/airootfs/root/installer.py
+sudo mkarchiso -v -w bin/iso/online/ -o bin/iso/online/ iso/online/
+sudo mkarchiso -v -w bin/iso/offline/ -o bin/iso/offline/ iso/offline/
