@@ -10,6 +10,7 @@ cp -r scripts/ iso/online/airootfs/etc/installer/
 cp -r scripts/ iso/offline/airootfs/etc/installer/
 cp -r sysrootfs/ iso/online/airootfs/etc/installer/
 cp -r sysrootfs/ iso/offline/airootfs/etc/installer/
+mkdir -p iso/offline/airootfs/etc/installer/offline/
 cp ~/Documents/symmos/archives/sys.tar.gz iso/offline/airootfs/etc/installer/offline/sys.tar.gz
 cp ~/Documents/symmos/archives/graphical.tar.gz iso/offline/airootfs/etc/installer/offline/graphical.tar.gz
 mkdir -p iso/online/airootfs/root/installer/
@@ -18,7 +19,7 @@ cp -r bin/hxwidgets/ iso/online/airootfs/root/installer/
 cp -r bin/hxwidgets/ iso/offline/airootfs/root/installer/
 cp installer.py iso/online/airootfs/root/installer.py
 cp installer.py iso/offline/airootfs/root/installer.py
+mkdir -p bin/iso/online/
 sudo mkarchiso -v -w bin/iso/online/ -o bin/iso/online/ iso/online/
-sudo mkarchiso -v -w bin/iso/offline/ -o bin/iso/offline/ iso/offline/
 rm iso/offline/airootfs/etc/installer/offline/sys.tar.gz
 rm iso/offline/airootfs/etc/installer/offline/graphical.tar.gz
