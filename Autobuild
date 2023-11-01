@@ -20,3 +20,5 @@ cp installer.py iso/online/airootfs/root/installer.py
 cp installer.py iso/offline/airootfs/root/installer.py
 sudo mkarchiso -v -w bin/iso/online/ -o bin/iso/online/ iso/online/
 sudo mkarchiso -v -w bin/iso/offline/ -o bin/iso/offline/ iso/offline/
+rm iso/offline/airootfs/etc/installer/offline/sys.tar.gz
+rm iso/offline/airootfs/etc/installer/offline/graphical.tar.gz
