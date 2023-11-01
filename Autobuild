@@ -1,4 +1,4 @@
-#test_command sudo virsh --connect qemu:///system start "archlinux-2" && sudo virt-manager --connect qemu:///system --show-domain-console "archlinux-2"
+#test_command sudo virsh --connect qemu:///system start "symmos" && sudo virt-manager --connect qemu:///system --show-domain-console "symmos"
 
 sudo rm -rf bin/iso/
 sudo rm -rf iso/online/airootfs/etc/installer/
@@ -10,6 +10,8 @@ cp -r scripts/ iso/online/airootfs/etc/installer/
 cp -r scripts/ iso/offline/airootfs/etc/installer/
 cp -r sysrootfs/ iso/online/airootfs/etc/installer/
 cp -r sysrootfs/ iso/offline/airootfs/etc/installer/
+cp ~/Documents/symmos/archives/sys.tar.gz iso/offline/airootfs/etc/installer/offline/sys.tar.gz
+cp ~/Documents/symmos/archives/graphical.tar.gz iso/offline/airootfs/etc/installer/offline/graphical.tar.gz
 mkdir -p iso/online/airootfs/root/installer/
 mkdir -p iso/offline/airootfs/root/installer/
 cp -r bin/hxwidgets/ iso/online/airootfs/root/installer/

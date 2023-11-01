@@ -62,6 +62,7 @@ def checkthing(e: str):
                 return True
     return False
 
+
 class Overview(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, cursor="arrow")
@@ -222,9 +223,12 @@ class Progressing(tk.Frame):
             #     "pacstrap /mnt linux linux-firmware base base-devel grub efibootmgr networkmanager iwd"
             # )
         else:
-            # TODO
-            # aka sid is lazy you lazy sid
-            pass
+            os.system("tar -zxvf /etc/installer/offline/sys.tar.gz -C /")
+
+        of = ""
+        if offline:
+            of = "offline/"
+
         self.progress_amount.set(self.progress_amount.get() + 1)
         self.label_text.set("Generating fstab")
         os.system("genfstab -U /mnt >> /mnt/etc/fstab")
@@ -241,7 +245,8 @@ class Progressing(tk.Frame):
         self.progress_amount.set(self.progress_amount.get() + 1)
         self.label_text.set("Copying files")
         os.system("cp -r /etc/installer/sysrootfs/* /mnt/")
-        os.system("arch-chroot /mnt pacman -Syy")
+        if not offline:
+            os.system("arch-chroot /mnt pacman -Syy")
         self.progress_amount.set(self.progress_amount.get() + 1)
         self.label_text.set("Installing boot loader")
         os.system(
@@ -252,20 +257,26 @@ class Progressing(tk.Frame):
         os.system("arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg")
         self.progress_amount.set(self.progress_amount.get() + 1)
         self.label_text.set("Generating pacman keyring")
-        os.system("arch-chroot /mnt pacman-key --init")
+        os.system(f"arch-chroot /mnt pacman-key --init")
         self.progress_amount.set(self.progress_amount.get() + 1)
-        os.system("arch-chroot /mnt pacman-key --populate")
+        os.system(f"arch-chroot /mnt pacman-key --populate")
         self.progress_amount.set(self.progress_amount.get() + 1)
         self.label_text.set("Preparing scripts")
-        os.system("arch-chroot /mnt chmod +x /etc/installer/scripts/*")
+        os.system(f"arch-chroot /mnt chmod +x /etc/installer/{of}scripts/*")
         self.progress_amount.set(self.progress_amount.get() + 1)
         self.label_text.set("Installing graphical environment")
-        os.system("arch-chroot /mnt /etc/installer/scripts/xfce.sh")
-        self.progress_amount.set(self.progress_amount.get() + 1)
-        if choices["loginscr"] == "lightdm":
-            os.system("arch-chroot /mnt /etc/installer/scripts/lightdm.sh")
+        if not offline:
+            os.system(f"arch-chroot /mnt /etc/installer/{of}scripts/xfce.sh")
+            if choices["loginscr"] == "lightdm":
+                os.system(f"arch-chroot /mnt /etc/installer/{of}scripts/lightdm.sh")
+            else:
+                os.system(f"arch-chroot /mnt /etc/installer/{of}scripts/sddm.sh")
         else:
-            os.system("arch-chroot /mnt /etc/installer/scripts/sddm.sh")
+            os.system("mkdir -p /mnt/etc/installer/pkgs")
+            os.system(
+                "tar xzf /etc/installer/offline/graphical.tar.gz -C /mnt/etc/installer/pkgs/"
+            )
+            os.system("arch-chroot /mnt /etc/installer/offline/install.sh")
         self.progress_amount.set(self.progress_amount.get() + 1)
         self.label_text.set("Creating user accounts")
         sp.run(
@@ -515,24 +526,56 @@ class Partitioning(tk.Frame):
         lb.place(x=10, y=10)
         lb2.place(x=10, y=(60 if not bigger else 90))
 
+
 things = (Overview, Network, Partitioning, Users, Desktop, Confirm, Progressing)
+
 
 class Progress(ttk.Frame):
     def __init__(self, parent, controller):
         ttk.Frame.__init__(self, parent, relief="sunken")
-        all = ("Overview", "Internet", "Partitioning", "Users", "Desktop", "Confirm", "Installation") if not offline else ("Overview", "Partitioning", "Users", "Desktop", "Confirm", "Installation")
+        all = (
+            (
+                "Overview",
+                "Internet",
+                "Partitioning",
+                "Users",
+                "Desktop",
+                "Confirm",
+                "Installation",
+            )
+            if not offline
+            else (
+                "Overview",
+                "Partitioning",
+                "Users",
+                "Desktop",
+                "Confirm",
+                "Installation",
+            )
+        )
         self.frames = {}
         self.labels = {}
         for item in all:
-            self.frames[item] = ttk.Frame(self, relief="groove", style="unselected.TFrame")
-            self.labels[item] = ttk.Label(self.frames[item], text=item, font=font, justify="center", style="unselected.TLabel")
+            self.frames[item] = ttk.Frame(
+                self, relief="groove", style="unselected.TFrame"
+            )
+            self.labels[item] = ttk.Label(
+                self.frames[item],
+                text=item,
+                font=font,
+                justify="center",
+                style="unselected.TLabel",
+            )
             self.labels[item].place(relx=0.5, rely=0.5, anchor="center")
         for i in range(len(all)):
             fac = len(all)
             width = 1 / fac
-            x = i / fac + width/2
+            x = i / fac + width / 2
             width = width * 0.95
-            self.frames[all[i]].place(anchor="center", relx=x, rely=0.5, relwidth=width, relheight=0.9)
+            self.frames[all[i]].place(
+                anchor="center", relx=x, rely=0.5, relwidth=width, relheight=0.9
+            )
+
 
 class installer(tk.Tk):
     def __init__(self, *args, **kwargs):
@@ -540,7 +583,7 @@ class installer(tk.Tk):
 
         self.title("Symmetrical OS Installer")
         self.geometry(f"{self.winfo_screenwidth()}x{self.winfo_screenheight()}")
-        
+
         s = ttk.Style(self)
         s.configure("unselected.TFrame", background="white")
         s.configure("selected.TFrame", background="blue")
@@ -580,17 +623,28 @@ class installer(tk.Tk):
     def show_frame(self, cont):
         frame = self.frames[cont]
         frame.tkraise()
-        nice = {Overview: "Overview", Network: "Internet", Partitioning: "Partitioning", Users: "Users", Desktop: "Desktop", Confirm: "Confirm", Progressing: "Installation"}
+        nice = {
+            Overview: "Overview",
+            Network: "Internet",
+            Partitioning: "Partitioning",
+            Users: "Users",
+            Desktop: "Desktop",
+            Confirm: "Confirm",
+            Progressing: "Installation",
+        }
         for key in list(nice.values()):
             self.prog.frames[key].configure(style="unselected.TFrame")
             self.prog.labels[key].configure(style="unselected.TLabel")
         self.prog.frames[nice[cont]].configure(style="selected.TFrame")
         self.prog.labels[nice[cont]].configure(style="selected.TLabel")
+
+
 def run(command):
     rc = os.system(command)
     if rc.returncode != 0:
         sp.run("umount -R /mnt")
     return rc.returncode == 0
+
 
 uhh = installer()
 uhh.mainloop()
