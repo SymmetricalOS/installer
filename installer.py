@@ -12,7 +12,7 @@ offline = os.path.exists("/etc/installer/offline")
 
 bigger = True
 
-prod = False
+prod = True
 
 font = ("Legato Sans", 12)
 fontbig = ("Legato Sans", 33)
@@ -61,14 +61,6 @@ def checkthing(e: str):
             if not has_number_at_end(e):
                 return True
     return False
-
-
-class Progress(tk.Frame):
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        lb = ttk.Label(self, text="Example progress stuff", font=fontbig)
-        lb.place(x=0, y=0)
-
 
 class Overview(tk.Frame):
     def __init__(self, parent, controller):
@@ -128,12 +120,12 @@ class Network(tk.Frame):
                         else ""
                     )
                     + (
-                        "\nAlternatively, you can connect to a Wi-Fi network below."
+                        "\nSoon, you will be able to use a wireless network in the installer."
                         if len(self.neteth) > 0 and len(self.netwire) > 0
                         else "\n"
                     )
                     + (
-                        "Wireless connectability detected. Please connect to a Wi-Fi network below."
+                        "If a wired connection is available, please use it. Otherwise, wait for an update to the installer.\nThank you for understanding."
                         if len(self.neteth) == 0 and len(self.netwire) > 0
                         else ""
                     )
@@ -154,7 +146,7 @@ class Network(tk.Frame):
         lb2.place(x=10, y=(60 if not bigger else 80))
         next = ttk.Button(self, text="Next", command=check_next)
         back = ttk.Button(
-            self, text="Back", command=lambda: controller.show_frame(Partitioning)
+            self, text="Back", command=lambda: controller.show_frame(Overview)
         )
         back.place(x=10, y=120)
         next.place(x=110, y=120)
@@ -166,7 +158,7 @@ class Progressing(tk.Frame):
         progress_total_var = 27
         self.progress_amount = tk.IntVar(self, 0)
         self.progress_total = tk.IntVar(self, progress_total_var)
-        self.label_text = tk.StringVar(self, "Installing will begin shortly...")
+        self.label_text = tk.StringVar(self, "Installation will begin shortly...")
         lb = ttk.Label(self, text="Installing Symmetrical OS", font=fontbig)
         lb.place(x=10, y=10)
         lb2 = ttk.Label(self, text="This may take a while.", font=font)
@@ -183,7 +175,7 @@ class Progressing(tk.Frame):
         self.thr.start()
 
     def commands(self):
-        if not prod:
+        if prod == False:
             return
 
         self.label_text.set("Preparing mirrors")
@@ -231,6 +223,7 @@ class Progressing(tk.Frame):
             # )
         else:
             # TODO
+            # aka sid is lazy you lazy sid
             pass
         self.progress_amount.set(self.progress_amount.get() + 1)
         self.label_text.set("Generating fstab")
@@ -522,28 +515,49 @@ class Partitioning(tk.Frame):
         lb.place(x=10, y=10)
         lb2.place(x=10, y=(60 if not bigger else 90))
 
-
 things = (Overview, Network, Partitioning, Users, Desktop, Confirm, Progressing)
 
+class Progress(ttk.Frame):
+    def __init__(self, parent, controller):
+        ttk.Frame.__init__(self, parent, relief="sunken")
+        all = ("Overview", "Internet", "Partitioning", "Users", "Desktop", "Confirm", "Installation") if not offline else ("Overview", "Partitioning", "Users", "Desktop", "Confirm", "Installation")
+        self.frames = {}
+        self.labels = {}
+        for item in all:
+            self.frames[item] = ttk.Frame(self, relief="groove", style="unselected.TFrame")
+            self.labels[item] = ttk.Label(self.frames[item], text=item, font=font, justify="center", style="unselected.TLabel")
+            self.labels[item].place(relx=0.5, rely=0.5, anchor="center")
+        for i in range(len(all)):
+            fac = len(all)
+            width = 1 / fac
+            x = i / fac + width/2
+            width = width * 0.95
+            self.frames[all[i]].place(anchor="center", relx=x, rely=0.5, relwidth=width, relheight=0.9)
 
 class installer(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
 
         self.title("Symmetrical OS Installer")
-        self.geometry("1280x720")
+        self.geometry(f"{self.winfo_screenwidth()}x{self.winfo_screenheight()}")
+        
+        s = ttk.Style(self)
+        s.configure("unselected.TFrame", background="white")
+        s.configure("selected.TFrame", background="blue")
+        s.configure("unselected.TLabel", background="white")
+        s.configure("selected.TLabel", background="blue")
 
         # the top part
-        other = tk.Frame(self, height=(75 if not bigger else 125))
-        other.pack(side="top", fill="x", expand=False)
+        self.other = tk.Frame(self, height=(75 if not bigger else 125))
+        self.other.pack(side="top", fill="x", expand=False)
 
-        prog = Progress(other, self)
-        prog.place(x=0, y=0, relwidth=1, relheight=1)
+        self.prog = Progress(self.other, self)
+        self.prog.place(x=0, y=0, relwidth=1, relheight=1)
 
         # creating a container
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
-        # container.place(relx=0, rely=0, relwidth=1, relheight=1)
+        # container.place(relx=0, rely=0, relwidth=1, relheight=1) # remnant from before we implemented the progress bar
 
         container.grid_rowconfigure(1, weight=4)
         container.grid_rowconfigure(0, weight=1)
@@ -566,14 +580,17 @@ class installer(tk.Tk):
     def show_frame(self, cont):
         frame = self.frames[cont]
         frame.tkraise()
-
-
+        nice = {Overview: "Overview", Network: "Internet", Partitioning: "Partitioning", Users: "Users", Desktop: "Desktop", Confirm: "Confirm", Progressing: "Installation"}
+        for key in list(nice.values()):
+            self.prog.frames[key].configure(style="unselected.TFrame")
+            self.prog.labels[key].configure(style="unselected.TLabel")
+        self.prog.frames[nice[cont]].configure(style="selected.TFrame")
+        self.prog.labels[nice[cont]].configure(style="selected.TLabel")
 def run(command):
     rc = os.system(command)
     if rc.returncode != 0:
         sp.run("umount -R /mnt")
     return rc.returncode == 0
-
 
 uhh = installer()
 uhh.mainloop()
