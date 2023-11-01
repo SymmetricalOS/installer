@@ -246,14 +246,14 @@ class Progressing(tk.Frame):
         self.label_text.set("Creating initramfs")
         os.system("arch-chroot /mnt mkinitcpio -P")
         self.progress_amount.set(self.progress_amount.get() + 1)
+        self.label_text.set("Copying files")
+        os.system("cp -r /etc/installer/sysrootfs/* /mnt/")
+        os.system("arch-chroot /mnt pacman -Syy")
+        self.progress_amount.set(self.progress_amount.get() + 1)
         self.label_text.set("Installing boot loader")
         os.system(
             "arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot"
         )
-        self.progress_amount.set(self.progress_amount.get() + 1)
-        self.label_text.set("Copying files")
-        os.system("cp -r /etc/installer/sysrootfs/* /mnt/")
-        os.system("arch-chroot /mnt pacman -Syy")
         self.progress_amount.set(self.progress_amount.get() + 1)
         self.label_text.set("Configuring boot loader")
         os.system("arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg")
