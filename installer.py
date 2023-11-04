@@ -37,12 +37,10 @@ sysreqs = {"storage": 15360, "uefi": True}
 
 
 # 0 - System is supported
-# 1 - Not enough storage
-# 2 - No UEFI support
+# 1 - No UEFI support
 def checkSysreqs():
-    if not os.path.isdir("/sys/firmware/efi/"):
-        return 2
-    # TODO: drive size check
+    if not os.path.isdir("/sys/firmware/efi/") and sysreqs["uefi"]:
+        return 1
     return 0
 
 
@@ -66,6 +64,18 @@ def has_number_at_end(input_string):
 
 
 def checkthing(e: str):
+    dfstdout = sp.check_output("/usr/bin/df", shell=True)  # put it here
+    bigenough = False
+    for line in dfstdout.split("\n"):
+        if line.startswith(f"/dev/{e} "):
+            informations = line.split(" ")
+            if informations[1] >= (sysreqs["storage"] * 1024):
+                bigenough = True
+
+    if not bigenough:
+        return False
+
+    #
     if e.startswith("nvme"):
         if e[5].startswith("n"):
             if not e[0:-1].endswith("p"):
