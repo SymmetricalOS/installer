@@ -22,14 +22,28 @@ if bigger:
     font = font2
     fontbig = fontbig2
 
-choices = {
-    "disk": "",
-    "disktype": "",
-    "disktypeg": "",
-    "username": "",
-    "windowman": "",
-    "loginscr": "",
-}
+choices = (
+    {
+        "disk": "",
+        "disktype": "",
+        "disktypeg": "",
+        "username": "",
+        "windowman": "",
+        "loginscr": "",
+    },
+)
+
+sysreqs = {"storage": 15360, "uefi": True}
+
+
+# 0 - System is supported
+# 1 - Not enough storage
+# 2 - No UEFI support
+def checkSysreqs():
+    if not os.path.isdir("/sys/firmware/efi/"):
+        return 2
+    # TODO: drive size check
+    return 0
 
 
 def run_commands_file(filename):
