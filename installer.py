@@ -69,9 +69,11 @@ def checkthing(e: str):
     for line in dfstdout.split("\n"):
         if line.startswith(f"/dev/{e} "):
             informations = line.split(" ")
+            for x in range(len(informations)):
+                if informations[x] == " ":
+                    informations.pop(x)
             if informations[1] >= (sysreqs["storage"] * 1024):
                 bigenough = True
-
     if not bigenough:
         return False
 
@@ -90,8 +92,8 @@ def checkthing(e: str):
 class Overview(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, cursor="arrow")
-        # welcometxt = "Welcome to the Symmetrical OS installer!\nAt the top, you will see the progress display.\nThis will show you what you are going to be setting up during the installation process.\nPress Next to start the setup."
-        welcometxt = "Welcome to the Symmetrical OS installer!\nAfter this installer is complete, you will be able to use Symmetrical OS.\nPress Next to start the setup."
+        welcometxt = "Welcome to the Symmetrical OS installer!\nAfter this installer is complete, you will be able to use Symmetrical OS.\nAt the top, you will see the progress display.\nThis will show you what you are going to be setting up during the installation process.\nPress Next to start the setup."
+        # welcometxt = "Welcome to the Symmetrical OS installer!\nAfter this installer is complete, you will be able to use Symmetrical OS.\nPress Next to start the setup."
 
         def check():
             return len([x for x in os.listdir("/dev/") if checkthing(x)]) > 0
@@ -241,7 +243,7 @@ class Progressing(tk.Frame):
         self.label_text.set("Installing system")
         if not offline:
             os.system(
-                "pacstrap /mnt linux linux-firmware symmos symmos-boot symmos-networking symmos-essentials"
+                'pacstrap /mnt linux linux-firmware symmos symmos-boot symmos-networking symmos-essentials --overwrite "*"'
             )
             # os.system(
             #     "pacstrap /mnt linux linux-firmware base base-devel grub efibootmgr networkmanager iwd"
@@ -499,7 +501,6 @@ class Partitioning(tk.Frame):
             font=font,
         )
         stuffs = os.listdir("/dev/")
-
         disks = [x for x in stuffs if checkthing(x)]
 
         def set_things(disk, choice):
@@ -513,8 +514,22 @@ class Partitioning(tk.Frame):
         if len(disks) > 0 or not prod:
             chosen = tk.StringVar()
             hmm = tk.StringVar()
-            disk = ttk.Combobox(self, textvariable=chosen)
-            options = ttk.Combobox(self, textvariable=hmm)
+
+            next = ttk.Button(
+                self, text="Next", command=lambda: set_things(chosen.get(), hmm.get())
+            )
+
+            def get_thing(val):
+                try:
+                    if checkthing(val):
+                        next.place(x=110, y=(170 if not bigger else 265))
+                    else:
+                        next.place_forget()
+                except:
+                    next.place_forget()
+
+            disk = ttk.OptionMenu(self, textvariable=chosen, command=get_thing)
+            options = ttk.OptionMenu(self, textvariable=hmm)
             options["values"] = [
                 "Install Symmetrical OS alongside the currently installed OS",
                 "Erase the disk and install Symmetrical OS",
@@ -522,10 +537,6 @@ class Partitioning(tk.Frame):
             options.place(x=10, y=(140 if not bigger else 230))
             disk["values"] = disks
             disk.place(x=10, y=(110 if not bigger else 200))
-            next = ttk.Button(
-                self, text="Next", command=lambda: set_things(chosen.get(), hmm.get())
-            )
-            next.place(x=110, y=(170 if not bigger else 265))
             back = ttk.Button(
                 self,
                 text="Back",
