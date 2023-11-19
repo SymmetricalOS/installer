@@ -64,18 +64,19 @@ def has_number_at_end(input_string):
 
 
 def checkthing(e: str):
-    dfstdout = sp.check_output("/usr/bin/df", shell=True)  # put it here
-    bigenough = False
-    for line in dfstdout.split("\n"):
-        if line.startswith(f"/dev/{e} "):
-            informations = line.split(" ")
-            for x in range(len(informations)):
-                if informations[x] == " ":
-                    informations.pop(x)
-            if informations[1] >= (sysreqs["storage"] * 1024):
-                bigenough = True
-    if not bigenough:
-        return False
+    # FIXME
+    # dfstdout = sp.check_output("/usr/bin/df", shell=True)  # put it here
+    # bigenough = False
+    # for line in dfstdout.split("\n"):
+    #     if line.decode("utf-8").startswith(f"/dev/{e} "):
+    #         informations = line.split(" ")
+    #         for x in range(len(informations)):
+    #             if informations[x] == " ":
+    #                 informations.pop(x)
+    #         if informations[1] >= (sysreqs["storage"] * 1024):
+    #             bigenough = True
+    # if not bigenough:
+    #     return False
 
     #
     if e.startswith("nvme"):
