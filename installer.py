@@ -12,7 +12,7 @@ offline = os.path.exists("/etc/installer/offline")
 
 bigger = True
 
-prod = True
+prod = False
 
 font = ("Legato Sans", 12)
 fontbig = ("Legato Sans", 33)
@@ -506,11 +506,10 @@ class Partitioning(tk.Frame):
 
         def set_things(disk, choice):
             print(disk, choice)
-            if disk != "" and choice != "":
-                choices["disk"] = disk
-                choices["disktype"] = 0 if choice.startswith("Erase") else 1
-                choices["disktypeg"] = choice
-                controller.show_frame(Users)
+            choices["disk"] = disk
+            choices["disktype"] = 0 if choice.startswith("Erase") else 1
+            choices["disktypeg"] = choice
+            controller.show_frame(Users)
 
         if len(disks) > 0 or not prod:
             chosen = tk.StringVar()
@@ -533,6 +532,7 @@ class Partitioning(tk.Frame):
                 disk = ttk.OptionMenu(
                     self, chosen, disks[0], *disks, command=get_thing
                 )
+                get_thing(disks[0])
                 disk.place(x=10, y=(110 if not bigger else 200))
             uuuuuuh = [
                 "Install Symmetrical OS alongside the currently installed OS",
@@ -540,6 +540,7 @@ class Partitioning(tk.Frame):
             ]
             options = ttk.OptionMenu(self, hmm, uuuuuuh[0], *uuuuuuh)
             options.place(x=10, y=(140 if not bigger else 230))
+            
             back = ttk.Button(
                 self,
                 text="Back",
