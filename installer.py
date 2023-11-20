@@ -12,7 +12,7 @@ offline = os.path.exists("/etc/installer/offline")
 
 bigger = True
 
-prod = False
+prod = True
 
 font = ("Legato Sans", 12)
 fontbig = ("Legato Sans", 33)
