@@ -529,14 +529,13 @@ class Partitioning(tk.Frame):
                 except:
                     next.place_forget()
 
-            disk = ttk.OptionMenu(self, textvariable=chosen, command=get_thing)
-            options = ttk.OptionMenu(self, textvariable=hmm)
-            options["values"] = [
+            disk = ttk.OptionMenu(self, variable=chosen, disks[0], *disks, command=get_thing)
+            uuuuuuh = [
                 "Install Symmetrical OS alongside the currently installed OS",
                 "Erase the disk and install Symmetrical OS",
             ]
+            options = ttk.OptionMenu(self, uuuuuuh[0], *uuuuuuh, variable=hmm)
             options.place(x=10, y=(140 if not bigger else 230))
-            disk["values"] = disks
             disk.place(x=10, y=(110 if not bigger else 200))
             back = ttk.Button(
                 self,
