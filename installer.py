@@ -530,7 +530,7 @@ class Partitioning(tk.Frame):
                     next.place_forget()
 
             disk = ttk.OptionMenu(
-                self, disks[0], variable=chosen, *disks, command=get_thing
+                self, disks[0], *disks, variable=chosen, command=get_thing
             )
             uuuuuuh = [
                 "Install Symmetrical OS alongside the currently installed OS",
